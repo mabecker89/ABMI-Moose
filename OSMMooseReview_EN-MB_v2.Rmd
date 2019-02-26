@@ -1,0 +1,65 @@
+---
+title: "Knowledge Assessment of Moose (Alces alces) in Alberta's Lower Athabasca Region"
+author: "Eric Neilson, Marcus Becker"
+date: "February 25, 2019"
+output: 
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+  pdf_document:
+    toc: yes
+fontsize: 10.5pt
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+
+# Install packages
+library(tidyverse)
+library(sf)
+library(tmap) 
+library(tmaptools)
+
+# Import moose data
+abmi_metrics <- read_csv("./Data/Raw/ABMIMetrics.csv")
+metrics <- read_csv("./Data/Raw/Metrics.csv")
+
+# Import spatial data (LAR, OSR, WMUs in study region)
+
+ab_osr <- st_read("./SpatialData/AB_OSR.shp", stringsAsFactors = FALSE,
+                  quiet = TRUE)
+ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+ab_lar <- st_read("./SpatialData/AB_LAR.shp", stringsAsFactors = FALSE,
+                  quiet = TRUE)
+
+# Set projections
+
+ab_osr <- st_transform(ab_osr, "+init=epsg:4326")
+ab_wmu <- st_transform(ab_wmu, "+init=epsg:4326")
+ab_lar <- st_transform(ab_lar, "+init=epsg:4326")
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## Executive Summary
+
+
+```{r data-cleanup include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+
+# Clean up WMU codes
+
+```
+
+## Including Plots
+
+
+```{r }
+
+
+
+```
+
+
