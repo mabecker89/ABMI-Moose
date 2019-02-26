@@ -1,4 +1,6 @@
 # ABMI-Moose
-This repository holds data and script associated with moose work for the OSM synthesis
 
-This is a change I made within RStudio. 
+This repository holds data and scripts associated with moose work for the OSM 
+synthesis. 
+
+
