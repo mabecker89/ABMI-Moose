@@ -1,6 +1,6 @@
 ---
-title: "Knowledge Assessment of Moose (Alces alces) in Alberta's Lower Athabasca Region"
-author: "Eric Neilson, Marcus Becker"
+title: "Knowledge Assessment of Moose (Alces alces) in Alberta's Oil Sands Region"
+author: "Eric Neilson, Marcus Becker, Erin Bayne"
 date: "February 25, 2019"
 output: 
   html_document:
@@ -13,7 +13,7 @@ fontsize: 10.5pt
 urlcolor: blue
 ---
 
-```{r setup, include=FALSE}
+```{r setup-cleanup, include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE, cache = TRUE}
 
 # Install packages
 library(tidyverse)
@@ -21,12 +21,13 @@ library(sf)
 library(tmap) 
 library(tmaptools)
 
+knitr::opts_chunk$set(echo = TRUE)
+
 # Import moose data
 abmi_metrics <- read_csv("./Data/Raw/ABMIMetrics.csv")
 metrics <- read_csv("./Data/Raw/Metrics.csv")
 
 # Import spatial data (LAR, OSR, WMUs in study region)
-
 ab_osr <- st_read("./SpatialData/AB_OSR.shp", stringsAsFactors = FALSE,
                   quiet = TRUE)
 ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
@@ -35,31 +36,61 @@ ab_lar <- st_read("./SpatialData/AB_LAR.shp", stringsAsFactors = FALSE,
                   quiet = TRUE)
 
 # Set projections
-
 ab_osr <- st_transform(ab_osr, "+init=epsg:4326")
 ab_wmu <- st_transform(ab_wmu, "+init=epsg:4326")
 ab_lar <- st_transform(ab_lar, "+init=epsg:4326")
 
-knitr::opts_chunk$set(echo = TRUE)
+# Let's clean the metrics data. Goal: a tidy dataset, with each row equal to one 
+# observation (e.g., a density estimate). 
+
+
 
 ```
+
 
 ## Executive Summary
 
 
-```{r data-cleanup include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+```{r  include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
 
-# Clean up WMU codes
+# 
 
-```
-
-## Including Plots
-
-
-```{r }
 
 
 
 ```
+
+## High Level Summary of the Data Sourcees We Have
+
+
+```{r maps}
+
+# OSR, LAR, and WMUs that intersect with each. Perhaps we need an AB polygon as
+# well. 
+
+```
+
+## Section with qualitative discussion regarding impacts of various HF/Landcover
+features.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
