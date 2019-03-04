@@ -62,7 +62,7 @@ GDens$Prec=((GDens$CIU-GDens$CIL)/GDens$Density)*100
 # ABMI densities
 ADens <- read.csv("ABMIMetrics.csv")
 ADens$WMU=as.factor(ADens$WMU)
-ADens$Prec=((ADens$CIU-ADens$CIL)/ADens$Density)*100
+ADens$Prec=((ADens$CIU-ADens$CIL)/ADens$Density)*100 # Calculate precision? 
 
 # output precision against power
 # ggplot(ADens,aes(SampleSize,Prec))+
