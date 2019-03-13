@@ -14,13 +14,32 @@ metrics_m <- metrics %>%
 
 # Start with the data sources
 df <- metrics_m %>%
-  group_by(Title) %>%
+  group_by(Title, Method) %>%
   # Count = number of 'observations' per source
   summarise(count = n()) %>% 
   arrange(desc(count))
   # OK, what else would we want to know about each source?
 
+# Let's look at methods
+df_meth <- metrics_m %>%
+  group_by(Method) %>%
+  count()
+# Mostly census flights. Next most is telemetry - what are those studies telling
+# us?
+df_tel <- metrics_m %>%
+  filter(WMU == "530 Full") %>%
+  View()
 
+         Response == "Density") %>%
+  View()
 
+df_year <- metrics_m %>%
+  filter(Method == "CensusFlights") %>%
+  group_by(StartYear) %>%
+  count()
+
+twentyeighteen <- metrics_m %>%
+  filter(Method == "CensusFlights",
+         StartYear == "2018")
 
 
