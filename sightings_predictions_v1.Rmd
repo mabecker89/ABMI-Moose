@@ -1,0 +1,209 @@
+---
+title: "Aerial Moose Sightings vs. ABMI Abundance Predictions in the OSM Region of Alberta"
+author: "Marcus Becker"
+date: "March 14, 2019"
+output: 
+  html_document:
+    highlight: zenburn
+    theme: readable
+    code_folding: hide
+---
+
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE, cache = TRUE}
+
+# Load packages
+library(sf)
+library(tidyverse)
+library(leaflet)
+library(htmlwidgets)
+library(leaflet.extras)
+library(splitstackshape)
+library(rmapshaper)
+library(RColorBrewer)
+
+# Import data
+ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+
+pixel_1km <- st_read("./SpatialData/ABMI_Grid_1KM_OSM.shp",
+                     stringsAsFactors = FALSE, quiet = TRUE)
+
+gov_obs <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018.csv")
+abmi_pred <- read_csv("./Data/Raw/Moose_km2-summary.csv")
+
+# Set projections
+ab_wmu <- st_transform(ab_wmu, "+init=epsg:4326")
+pixel_1km <- st_transform(pixel_1km, "+init=epsg:4326")
+
+# Clean and join data
+gov_obs_sf <- gov_obs %>%
+  # Change NAs to WMU 515
+  mutate(WMU = if_else(is.na(WMU), 515, WMU)) %>%
+  filter(SPECIES == "MOOSE -MOOS") %>%
+  select(-DATE_1) %>%
+  mutate(WMU = as.character(WMU)) %>%
+  # Convert to sf object
+  st_as_sf(coords = c("LONG", "LAT"), crs = 4326, agr = "constant") %>%
+  expandRows("COUNT") %>%
+  # Jitter for better visualization of hotspots w/ multiple animals sighted
+  st_jitter(0.01)
+
+ab_wmu <- ab_wmu %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-zeroes) %>%
+  filter(WMU %in% gov_obs_sf$WMU)
+
+pixel_1km_aoi <- pixel_1km %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-zeroes) %>%
+  filter(WMU %in% gov_obs_sf$WMU) %>%
+  select(GRID_LABEL, WMUNIT_NAM, WMU) %>%
+  rename(LinkID = GRID_LABEL) %>%
+  # Join in Moose predictions
+  left_join(abmi_pred, by = "LinkID")
+
+ab_wmu <- ms_simplify(ab_wmu, sys = TRUE)
+pixel_1km_aoi <- ms_simplify(pixel_1km_aoi, sys = TRUE)
+
+knitr::opts_chunk$set(fig.width = 12, fig.height = 10)
+
+```
+
+Here is a Heatmap of Aerial survey observations. 
+
+```{r heatmap include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+
+# Create maps!
+
+gov_obs_heat <-
+  ab_wmu %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Esri.WorldImagery") %>%
+  
+  addPolygons(color = "#282828", weight = 2, smoothFactor = 0.2, opacity = 2,
+              group = "None") %>%
+  addHeatmap(data = gov_obs_sf, radius = 10, blur = 18, minOpacity = 3)
+              
+gov_obs_heat
+
+```
+
+Here is a map of ABMI's relative abundance predictions for Moose in the OSR. 
+
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+
+# Another map!
+
+library(colourvalues)
+
+devtools::install_github("r-spatial/leafgl")
+library(leafgl)
+
+library(Hmisc)
+
+subset <- pixel_1km_aoi %>%
+  filter(!is.na(Curr),
+         Curr > 0) %>%
+  select(Ref, Curr) %>%
+  mutate(q_curr = as.numeric(cut2(Curr, g = 10))) %>%
+  select(q_curr)
+
+abund <- colour_values_rgb(subset$q_curr, palette = "Reds", 
+                           include_alpha = FALSE) / 255
+
+abund <- colorNumeric("RdYlBu", domain = subset$Curr)
+
+abmi_pred <- 
+  ab_wmu %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Esri.WorldImagery") %>%
+  
+  addPolygons(color = "#282828", weight = 2, smoothFactor = 0.2, opacity = 2,
+              group = "None") %>%
+  
+  addGlPolygons(data = subset,
+                color = abund) 
+
+abmi_pred
+
+test <- 
+  leaflet() %>%
+  addProviderTiles("Esri.WorldImagery") %>%
+  addResetMapButton() 
+  
+  addGlPolygons(data = subset,
+                color = abund) %>%
+  addMouseCoordinates() %>%
+  setView() %>%
+
+test
+
+
+
+```
+
+
+#-------------------------------------------------------------------------------
+
+```{r}
+
+library(mapview)
+library(leaflet)
+library(leafgl)
+library(sf)
+library(colourvalues)
+
+ch_lu = st_read("/media/timpanse/d8346522-ef28-4d63-9bf3-19fec6e13aab/bu_lenovo/software/testing/mapview/switzerland/landuse.shp")
+
+ch_lu = ch_lu[, c(1, 3, 4)] # don't handle NAs so far
+
+options(viewer = NULL)
+
+cols = colour_values_rgb(ch_lu$type, include_alpha = FALSE) / 255
+
+system.time({
+  m = leaflet() %>%
+    addProviderTiles(provider = providers$CartoDB.DarkMatter) %>%
+    addGlPolygons(data = ch_lu, 
+                     color = cols, 
+                     popup = "type",
+                     group = "pols") %>%
+    addMouseCoordinates() %>%
+    setView(lng = 8.3, lat = 46.85, zoom = 9) %>% 
+    addLayersControl(overlayGroups = "pols")
+})
+
+m
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
