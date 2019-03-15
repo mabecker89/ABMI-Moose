@@ -18,8 +18,10 @@ urlcolor: blue
 # Install packages
 library(tidyverse)
 library(sf)
+library(leaflet)
 library(tmap) 
 library(tmaptools)
+library(plotly)
 
 knitr::opts_chunk$set(echo = TRUE)
 
