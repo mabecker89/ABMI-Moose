@@ -26,8 +26,9 @@ library(plotly)
 knitr::opts_chunk$set(echo = TRUE)
 
 # Import moose data
-abmi_metrics <- read_csv("./Data/Raw/ABMIMetrics.csv")
-metrics <- read_csv("./Data/Raw/Metrics.csv")
+df_abmi <- read_csv("./Data/Raw/ABMIMetrics.csv")
+df_all <- read_csv("./Data/Raw/Metrics.csv")
+df_gov_recent <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018_Density.csv")
 
 # Import spatial data (LAR, OSR, WMUs in study region)
 ab_osr <- st_read("./SpatialData/AB_OSR.shp", stringsAsFactors = FALSE,
@@ -42,35 +43,121 @@ ab_osr <- st_transform(ab_osr, "+init=epsg:4326")
 ab_wmu <- st_transform(ab_wmu, "+init=epsg:4326")
 ab_lar <- st_transform(ab_lar, "+init=epsg:4326")
 
-# Let's clean the metrics data. Goal: a tidy dataset, with each row equal to one 
-# observation (e.g., a density estimate). 
-
-
 
 ```
 
 
 ## Executive Summary
 
+We reviewed technical reports and peer-reviewed articles to assess the state of
+knowledge of moose in Alberta's Oil Sands Region (OSR). Our intention was to
+elucidate what is known concerning moose in the region, and in particular, what
+the effect of oil and gas extraction has been on the moose population. We 
+reviewed 33 documents (20 reports, 12 peer-reviewed articles, and 1 thesis) and
+extracted relevant estimates of moose population state variables. In addition, 
+we utilized data from the Alberta Biodiversity Monitoring Institute's 
+(ABMI) camera monitoring program to corroborate this information and provide 
+additional context around moose population density and relative abundance in the
+OSR.
+
+The compiled metrics were used to construct estimates or describe the state of 
+the moose population in the OSR. Average moose population density, among the 
+Wildlife Management Units (WMUs) sampled, in the OSR is 0.17 per km2. We 
+uncovered no clear trend in moose density across years or WMUs, although the 
+sample size was often small. Similarly, moose calf:cow and bull:cow ratios were
+quite variable but also exhibited no clear trend in time or space. According to
+several studies, moose were sensitive to human disturbance, generally exhibiting
+low use and avoidance of human features across multiple scales of measurement. 
+
+In conclusion, moose are well studied in the OSR. Whereas no estimates of have 
+revealed a downward trend in population density, due to the beahvioural 
+responses of moose to human disturbance, we recommend further work exploring 
+changes in moose density at smaller scales in proximity to human disturbance.
+
 
 ```{r  include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
 
-# 
 
+
+```
+
+## High Level Summary of the Data Sources We Have
+
+
+```{r }
 
 
 
 ```
 
-## High Level Summary of the Data Sourcees We Have
+## Results
 
+### Population
 
-```{r maps}
+#### Density
 
-# OSR, LAR, and WMUs that intersect with each. Perhaps we need an AB polygon as
-# well. 
+```{r}
+
+df_dens1 <- df_all %>%
+  filter(Response == "Density",
+         Species == "Moose",
+         !is.na(WMU),
+         !WMU == "506;510" & !WMU == "530 North" & !WMU == "530 South") %>%
+  mutate(WMU = as.numeric(str_replace_all(WMU, "530 Full", "530"))) %>%
+  select(WMU, StartYear, MetricNum) %>%
+  rename(Survey_Year = StartYear,
+         Density = MetricNum) %>%
+  full_join(df_gov_recent, by = c("WMU", "Survey_Year")) %>%
+  # WMUs 258, 511, and 519 have different density estimates. 
+  mutate(Density = if_else(is.na(Density.y), Density.x, Density.y)) %>%
+  select(-c(Density.x, Density.y)) %>%
+  distinct() %>%
+  mutate(WMU = as.character(WMU))
+
+df_dens2 <- df_dens1 %>%
+  group_by(Survey_Year) %>%
+  summarise(mean_dens = mean(Density),
+            count = n(),
+            se = sd(Density)/sqrt(count))
+
+dens <- df_dens1 %>%
+  filter(Density < 1) %>%
+  ggplot(aes(x = Survey_Year, y = Density, colour = WMU)) +
+  geom_line() +
+  geom_point(size = 2.5) +
+  scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
+  # labs(y = expression(Density~(per~km^2)),
+  #     x = "") + 
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+        axis.text.y = element_text(size = 10))
+
+dens1
+
+dens1_p <- ggplotly(dens1)
+
+dens1_p
+
+dens2 <- df_dens2 %>%
+  filter(mean_dens < 1.2) %>%
+  ggplot(aes(x = Survey_Year, y = mean_dens)) +
+  geom_point(aes(size = count)) +
+  geom_errorbar(aes(ymin = mean_dens - se, ymax = mean_dens + se, 
+                    width = 0.1)) +
+  scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015))
+
+dens2
 
 ```
+
+We included density estimates from 19 government reports. The average density of
+moose in the region
+
+
+
+
+
+
 
 ## Section with qualitative discussion regarding impacts of various HF/Landcover
 features.
