@@ -13,12 +13,14 @@ fontsize: 10.5pt
 urlcolor: blue
 ---
 
-```{r setup-cleanup, include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE, cache = TRUE}
+```{r setup-cleanup, include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
 
 # Install packages
 library(tidyverse)
 library(sf)
 library(leaflet)
+library(leaflet.extras)
+library(rgeos)
 library(tmap) 
 library(tmaptools)
 library(plotly)
@@ -70,7 +72,7 @@ several studies, moose were sensitive to human disturbance, generally exhibiting
 low use and avoidance of human features across multiple scales of measurement. 
 
 In conclusion, moose are well studied in the OSR. Whereas no estimates of have 
-revealed a downward trend in population density, due to the beahvioural 
+revealed a downward trend in population density, due to the behavioural 
 responses of moose to human disturbance, we recommend further work exploring 
 changes in moose density at smaller scales in proximity to human disturbance.
 
@@ -82,7 +84,6 @@ changes in moose density at smaller scales in proximity to human disturbance.
 ```
 
 ## High Level Summary of the Data Sources We Have
-
 
 ```{r }
 
@@ -96,7 +97,18 @@ changes in moose density at smaller scales in proximity to human disturbance.
 
 #### Density
 
-```{r}
+We included density estimates from 19 government reports. The average density of
+moose within WMUs of the OSR between 2014 and 2018 (the interval over which the
+Government of Alberta began using the distance sampling method for aerial 
+surveys) is 0.17 animals per km^2. From 1993 to 2014, when the random 
+block/Gasaway method was used, moose density averaged 0.18 per km^2.
+
+Figure 1 below display the mean moose density across surveyed WMUs reported in
+Government of Alberta aerial ungulate survey reports. The error bars are one
+standard error. One year with an extreme density outlier (WMU 515 in 2004 with
+1.2 animals per km^2) was removed from the figure for graphical clarity. 
+
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
 
 df_dens1 <- df_all %>%
   filter(Response == "Density",
@@ -120,14 +132,13 @@ df_dens2 <- df_dens1 %>%
             count = n(),
             se = sd(Density)/sqrt(count))
 
-dens <- df_dens1 %>%
+dens1 <- df_dens1 %>%
   filter(Density < 1) %>%
   ggplot(aes(x = Survey_Year, y = Density, colour = WMU)) +
   geom_line() +
   geom_point(size = 2.5) +
   scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
-  # labs(y = expression(Density~(per~km^2)),
-  #     x = "") + 
+  # labs(y = expression(Density~(per~km^2)), x = "") + 
   theme_bw() +
   theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
         axis.text.y = element_text(size = 10))
@@ -144,19 +155,150 @@ dens2 <- df_dens2 %>%
   geom_point(aes(size = count)) +
   geom_errorbar(aes(ymin = mean_dens - se, ymax = mean_dens + se, 
                     width = 0.1)) +
-  scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015))
+  scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
+  labs(y = expression(Density~(per~km^2)), x = "") +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+        axis.text.y = element_text(size = 10),
+        panel.border = element_blank(),
+        panel.grid.minor = element_blank())
 
 dens2
 
 ```
 
-We included density estimates from 19 government reports. The average density of
-moose in the region
+The map below displays the moose density associated with each WMU in the study 
+region, calculated from the most recent aerial survey undertaken. 
+
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+
+df_dens_curr <- df_dens1 %>%
+  group_by(WMU) %>%
+  slice(which.max(Survey_Year)) %>%
+  mutate(Method = ifelse(Survey_Year >= 2014, 
+                         "Distance Sampling",
+                         "Random Block/Gasaway"))
+
+ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+
+ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+
+ab_osr <- st_read("./SpatialData/AB_WMU-OSR-Dissolve.shp",
+                  stringsAsFactors = FALSE, quiet = TRUE)
+
+ab_wmu <- ab_wmu %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-zeroes) %>%
+  filter(WMU %in% df_dens_curr$WMU) %>%
+  left_join(df_dens_curr, by = "WMU") %>%
+  select(WMUNIT_NAM, WMU, Survey_Year:Method) %>%
+  st_transform("+init=epsg:4326") %>%
+  st_cast("POLYGON")
+
+ab_prov <- ab_prov %>%
+  st_transform("+init=epsg:4326")
+
+ab_osr <- ab_osr %>% 
+  st_transform("+init=epsg:4326")
+
+# Static map
+
+# Using ggplot
+gg_map_dens <- ab_wmu %>%
+  ggplot() +
+  geom_sf(aes(fill = Density)) +
+  geom_sf_label(aes(label = WMU)) + 
+  coord_sf(datum = NA) +
+  theme_void()
+  
+# gg_map_dens
+
+legend_title <- expression("Density (animals per km"^2*")")
+
+# Using tmap
+tm_map_dens <-
+  tm_shape(ab_wmu) +
+  tm_fill(col = "Density", title = legend_title) +
+  tm_borders(col = "black") +
+  tm_fill(col = "Density", title = legend_title)  +
+  tm_text("WMU", size = 0.65) +
+  tm_compass(type = "4star", size = 2, 
+             position = c("left", "bottom")) +
+  tm_scale_bar(position = c("left", "bottom"))
+
+tm_map_dens
+
+# tmap_leaflet(tm_map_dens)
+
+# Interactive leaflet map
+
+# Define colours
+pal_1 <- colorNumeric(palette = "YlOrBr", domain = ab_wmu$Density)
+# Create df of WMU centroids for labels
+df_centers <- ab_wmu %>%
+  st_centroid() %>%
+  as_Spatial()
+
+map_1 <-
+ab_prov %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Stamen.TerrainBackground") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Imagery") %>%
+  addFullscreenControl() %>%
+  addResetMapButton() %>%
+  addScaleBar(position = "bottomright", 
+              options = scaleBarOptions(imperial = FALSE)) %>%
+  setView(lng = -113.07, lat = 56.53, zoom = 7) %>%
+  
+  # Polygon layers
+  addPolygons(color = "#070707", weight = 1, smoothFactor =  0.2, 
+              opacity = 2.0) %>%
+  
+  addPolygons(data = ab_wmu, color = "#070707", weight = 0.8,
+              smoothFactor = 0.5, opacity = 1.0, fillOpacity = 0.75, 
+              fillColor = ~ pal_1(Density), 
+              popup = paste("WMU Name:", 
+                            "<b>", ab_wmu$WMUNIT_NAM, "</b>", "<br>",
+                            "WMU Code:", 
+                            "<b>", ab_wmu$WMU, "</b>", "<br>",
+                            "Moose Density:", 
+                            "<b>", ab_wmu$Density, "</b>", "per km2", "<br>", 
+                            "<br>",
+                            "<i>", "Last surveyed in", 
+                            ab_wmu$Survey_Year, "<i>"),
+              group = "Moose Density - Aerial Surveys") %>%
+  
+  # Labels
+  addLabelOnlyMarkers(data = df_centers, label = ~WMUNIT_NAM,
+                      group = "Moose Density - Aerial Surveys",
+                      labelOptions = labelOptions(
+                        noHide = TRUE,
+                        textOnly = FALSE,
+                        textsize = "10px",
+                        opacity = 1,
+                        offset = c(0,0)
+                      )) %>%
+  
+  # Legend layer
+  addLegend(data = ab_wmu, position = "bottomleft", pal = pal_1, bins = 6,
+            values = ~Density, 
+            title = "Moose Density:<br>Animals per km2",
+            opacity = 0.9, group = "Moose Density - Aerial Surveys") %>%
+  
+  # Layers control
+  addLayersControl(overlayGroups = c("Imagery",
+                                     "Moose Density - Aerial Surveys"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  
+  hideGroup("Imagery")
+
+map_1
 
 
-
-
-
+```
 
 
 ## Section with qualitative discussion regarding impacts of various HF/Landcover
