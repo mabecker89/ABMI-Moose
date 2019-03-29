@@ -7,6 +7,9 @@ output:
     fig_caption: yes
     number_sections: yes
     toc: yes
+    code_folding: hide
+    highlight: zenburn
+    theme: readable
   pdf_document:
     toc: yes
 fontsize: 10.5pt
@@ -49,7 +52,7 @@ ab_lar <- st_transform(ab_lar, "+init=epsg:4326")
 ```
 
 
-## Executive Summary
+# Executive Summary
 
 We reviewed technical reports and peer-reviewed articles to assess the state of
 knowledge of moose in Alberta's Oil Sands Region (OSR). Our intention was to
@@ -83,7 +86,9 @@ changes in moose density at smaller scales in proximity to human disturbance.
 
 ```
 
-## High Level Summary of the Data Sources We Have
+# Data Sources
+
+Summarize data sources included in this review.
 
 ```{r }
 
@@ -91,11 +96,11 @@ changes in moose density at smaller scales in proximity to human disturbance.
 
 ```
 
-## Results
+# Results
 
-### Population
+## Population
 
-#### Density
+### Density
 
 We included density estimates from 19 government reports. The average density of
 moose within WMUs of the OSR between 2014 and 2018 (the interval over which the
@@ -143,7 +148,7 @@ dens1 <- df_dens1 %>%
   theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
         axis.text.y = element_text(size = 10))
 
-dens1
+# dens1
 
 dens1_p <- ggplotly(dens1)
 
@@ -164,6 +169,10 @@ dens2 <- df_dens2 %>%
         panel.grid.minor = element_blank())
 
 dens2
+
+# dens2_p <- ggplotly(dens2)
+
+# dens2_p
 
 ```
 
@@ -232,6 +241,13 @@ tm_map_dens
 
 # tmap_leaflet(tm_map_dens)
 
+```
+
+The interactive map below displays the moose density associated with each WMU in 
+the study region, calculated from the most recent aerial survey undertaken.
+
+``` {r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+
 # Interactive leaflet map
 
 # Define colours
@@ -297,12 +313,71 @@ ab_prov %>%
 
 map_1
 
-
 ```
 
+Comparison with ABMI WMU-level density estimates
+Discuss process for calculation? 
 
-## Section with qualitative discussion regarding impacts of various HF/Landcover
-features.
+### Lambda
+
+Only one document (Rolley and Keith, 1980) estimated the geometric rate of 
+increase of moose populations in northeastern Alberta directly. Whereas the
+study area was not within the OSR, we present the values here as a historical
+reference. In Rochester, Alberta, which was the study area, the geometric rate 
+of increase in moose was 1.24 and 1.03 in 1965 and 1979, respectively. 
+
+We calculated lambda for 9 WMUs from 13 Government of Alberta reports between 
+1993 and 2013 (Table). Across all WMUs and years, mean lambda was 1.03. As 
+should be expected given the stability of moose density in Northeastern Alberta,
+lambda is near one for all WMUs with reported metrics of density across multiple
+years (Table) but varies by WMU, with growth rates generally decreasing with
+latitute. 
+
+Insert map ... diverging colour scale: blue (lower than 1) to red (higher than
+1)
+
+### Demographics
+
+Of the documents we reviewed, 22 reported on either calf:cow or bull:cow ratios
+(or both). Including multiple values from Government of Alberta reports provided
+a total of 116 data points of either sex or calf ratios. 
+
+Across all years and WMUs for which ratios were reported,
+
++ The mean calf:cow ratio was **0.52**;
++ The mean bull:cow ratio was **0.51**.
+
+As shown in Figures, no clear trend in sex of calf ratios was observed either
+temporally or spatially. 
+
+### Survival
+
+We extracted either adult or calf survival values from three reviewed documents
+(9% of the total) for a combined 10 survival estimates. Calf survival was lower
+than adult survival and was higher when estimated with GPS telemetry vs. radio
+telemetry. 
+
+Table?
+
+## Distribution
+
+Here is were we include ABMI relative abundance predictions - right?
+
+## Behaviour
+
+### Selection
+
+### Use
+
+### Home Range Area
+
+# Discussion
+
+
+# Impacts of various human footprint / landcover
+
+Section with qualitative discussion regarding impacts of various HF, 
+disturbance, and landcover on moose population parameters. 
 
 
 
