@@ -27,6 +27,7 @@ library(rgeos)
 library(tmap) 
 library(tmaptools)
 library(plotly)
+library(DT)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -174,6 +175,14 @@ dens2
 
 # dens2_p
 
+# Do we want to include a table here simply showing the number of times each
+# WMU has been surveyed?
+
+tab1 <- df_dens1 %>%
+  group_by(WMU) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
 ```
 
 The map below displays the moose density associated with each WMU in the study 
@@ -246,7 +255,7 @@ tm_map_dens
 The interactive map below displays the moose density associated with each WMU in 
 the study region, calculated from the most recent aerial survey undertaken.
 
-``` {r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+``` {r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE, fig.dim = c(10,9)}
 
 # Interactive leaflet map
 
@@ -267,7 +276,7 @@ ab_prov %>%
   addResetMapButton() %>%
   addScaleBar(position = "bottomright", 
               options = scaleBarOptions(imperial = FALSE)) %>%
-  setView(lng = -113.07, lat = 56.53, zoom = 7) %>%
+  setView(lng = -113.89, lat = 56.53, zoom = 6.5) %>%
   
   # Polygon layers
   addPolygons(color = "#070707", weight = 1, smoothFactor =  0.2, 
@@ -316,6 +325,9 @@ map_1
 ```
 
 Comparison with ABMI WMU-level density estimates
+
+Scatterplot? 
+
 Discuss process for calculation? 
 
 ### Lambda
@@ -333,8 +345,75 @@ lambda is near one for all WMUs with reported metrics of density across multiple
 years (Table) but varies by WMU, with growth rates generally decreasing with
 latitute. 
 
-Insert map ... diverging colour scale: blue (lower than 1) to red (higher than
-1)
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+
+# Calculating lambda
+
+# Included all aerial surveys, with both methods. This might not be correct.
+
+df_lamb1 <- df_dens1 %>%
+  group_by(WMU) %>%
+  add_tally() %>%
+  # Filter out WMUs that have not been surveyed at least twice
+  filter(n > 1) %>%
+  arrange(WMU, Survey_Year) %>%
+  # Calculate lambda
+  mutate(Ndelta = Density - lag(Density),
+         Tdelta = Survey_Year - lag(Survey_Year),
+         Adelta = Ndelta / Tdelta,
+         Delta = lag(Density) + Adelta,
+         Lambda = Delta / lag(Density)) 
+
+df_nsurveys <- df_dens1 %>%
+  group_by(WMU) %>%
+  add_tally() %>%
+  select(WMU, n) %>%
+  distinct()
+
+df_lamb2 <- df_lamb1 %>%
+  group_by(WMU) %>%
+  # Calculate average lambda for WMUs with more than one value
+  summarise(Lambda_u = mean(Lambda, na.rm = TRUE)) %>%
+  left_join(df_nsurveys, by = "WMU") %>%
+  mutate(Lambda_u = round(Lambda_u, digits = 2))
+
+
+# Join lambda information to WMU polygons
+ab_wmu <- ab_wmu %>%
+  left_join(df_lamb2, by = "WMU")
+
+legend_title2 <- "Lambda"
+
+# Create static map of lambda
+tm_map_lamb <- ab_wmu %>%
+  tm_shape() +
+    tm_fill(col = "Lambda_u", 
+            palette = "-RdBu", 
+            midpoint = 1,
+            style = "cont",
+            colorNA = "grey60",
+            textNA = "Missing",
+            title = legend_title2) +
+    tm_borders(col = "black") +
+    tm_text("WMU", size = 0.65) +
+  tm_compass(type = "4star", size = 2, 
+             position = c("left", "bottom")) +
+  tm_scale_bar(position = c("left", "bottom"))
+
+tm_map_lamb
+
+datatable(data = df_lamb2,
+          class = 'cell-border stripe',
+          colnames = c("Wildlife Management Unit", "Lambda",
+                       "Number of Surveys"),
+          rownames = FALSE,
+          width = 500,
+          options = list(
+            columnDefs = list(list(className = 'dt-left', targets = 1)),
+            pageLength = 14,
+            dom = 't')) 
+
+```
 
 ### Demographics
 
@@ -348,7 +427,71 @@ Across all years and WMUs for which ratios were reported,
 + The mean bull:cow ratio was **0.51**.
 
 As shown in Figures, no clear trend in sex of calf ratios was observed either
-temporally or spatially. 
+temporally or spatially.
+
+Figure of ratios over time?
+Map of ratios -> same diverging colour scale. 
+
+```{r}
+
+df_demo <- df_all %>%
+  filter(Response == "CalfCow" | Response == "MaleFemale",
+         Species == "Moose",
+         !is.na(WMU)) %>%
+  separate(MetricText, into = c("numerator", "denominator"), sep = ":") %>%
+  mutate(numerator = as.numeric(numerator), 
+         denominator = as.numeric(denominator),                                     
+         ratio = numerator / denominator) %>%
+  mutate(ratio = if_else(is.na(ratio), MetricNum, ratio)) %>%
+  select(WMU, StartYear, Response, ratio) %>%
+  filter(!WMU == "518;519;529;530;531" & !WMU == "506;510" &
+         !WMU == "518;530;531" & !WMU == "530 North" & !WMU == "530 South")
+
+df_demo1 <- df_demo %>%
+  group_by(StartYear, Response) %>%
+  summarise(ratio_u = mean(ratio))
+
+demo1 <- df_demo1 %>%
+  ggplot(aes(x = StartYear, y = ratio_u)) +
+  geom_point() +
+  facet_wrap(~ Response) +
+  geom_smooth(method = "loess", se = TRUE)
+
+demo1
+
+df_demo2 <- df_demo %>%
+  group_by(WMU, Response) %>%
+  slice(which.max(StartYear))
+
+ab_wmu2 <- ab_wmu %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-zeroes) %>%
+  filter(WMU %in% df_demo2$WMU) %>%
+  full_join(df_demo2, by = "WMU") %>%
+  select(WMUNIT_NAM, WMU, StartYear:ratio) %>%
+  st_transform("+init=epsg:4326") %>%
+  st_cast("POLYGON")
+
+# Create static map of demographics
+tm_map_demo <- ab_wmu2 %>%
+  tm_shape() +
+    tm_fill(col = "ratio", 
+            palette = "Blues",
+            style = "cont",
+            colorNA = "grey60",
+            textNA = "Missing",
+            title = legend_title2) +
+    tm_borders(col = "black") +
+    tm_text("WMU", size = 0.65) +
+  tm_compass(type = "4star", size = 2, 
+             position = c("left", "bottom")) +
+  tm_scale_bar(position = c("left", "bottom"))
+
+tm_map_lamb
+
+# Problem
+  
+```
 
 ### Survival
 
