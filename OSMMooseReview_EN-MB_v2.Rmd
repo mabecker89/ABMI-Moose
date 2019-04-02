@@ -28,6 +28,7 @@ library(tmap)
 library(tmaptools)
 library(plotly)
 library(DT)
+library(Hmisc)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -37,21 +38,21 @@ df_all <- read_csv("./Data/Raw/Metrics.csv")
 df_gov_recent <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018_Density.csv")
 
 # Import spatial data (LAR, OSR, WMUs in study region)
-ab_osr <- st_read("./SpatialData/AB_OSR.shp", stringsAsFactors = FALSE,
-                  quiet = TRUE)
+
 ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
                   stringsAsFactors = FALSE, quiet = TRUE)
-ab_lar <- st_read("./SpatialData/AB_LAR.shp", stringsAsFactors = FALSE,
-                  quiet = TRUE)
+ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
 
-# Set projections
-ab_osr <- st_transform(ab_osr, "+init=epsg:4326")
-ab_wmu <- st_transform(ab_wmu, "+init=epsg:4326")
-ab_lar <- st_transform(ab_lar, "+init=epsg:4326")
-
+ab_wmu <- ab_wmu %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-c(zeroes, Shape_STAr, Shape_STLe)) %>%
+  st_transform("+init=epsg:4326") %>%
+  st_cast("POLYGON")
+  
+ab_prov <- st_transform(ab_prov, "+init=epsg:4326")
 
 ```
-
 
 # Executive Summary
 
@@ -96,6 +97,10 @@ Summarize data sources included in this review.
 
 
 ```
+
+## Study Area
+
+WMUs that interest the oilsands region.
 
 # Results
 
@@ -197,34 +202,14 @@ df_dens_curr <- df_dens1 %>%
                          "Distance Sampling",
                          "Random Block/Gasaway"))
 
-ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
-                  stringsAsFactors = FALSE, quiet = TRUE)
-
-ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
-                  stringsAsFactors = FALSE, quiet = TRUE)
-
-ab_osr <- st_read("./SpatialData/AB_WMU-OSR-Dissolve.shp",
-                  stringsAsFactors = FALSE, quiet = TRUE)
-
-ab_wmu <- ab_wmu %>%
-  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
-  select(-zeroes) %>%
-  filter(WMU %in% df_dens_curr$WMU) %>%
+ab_wmu_dens <- ab_wmu %>%
   left_join(df_dens_curr, by = "WMU") %>%
-  select(WMUNIT_NAM, WMU, Survey_Year:Method) %>%
-  st_transform("+init=epsg:4326") %>%
-  st_cast("POLYGON")
-
-ab_prov <- ab_prov %>%
-  st_transform("+init=epsg:4326")
-
-ab_osr <- ab_osr %>% 
-  st_transform("+init=epsg:4326")
+  select(WMUNIT_NAM, WMU, Survey_Year:Method)
 
 # Static map
 
 # Using ggplot
-gg_map_dens <- ab_wmu %>%
+gg_map_dens <- ab_wmu_dens %>%
   ggplot() +
   geom_sf(aes(fill = Density)) +
   geom_sf_label(aes(label = WMU)) + 
@@ -233,14 +218,17 @@ gg_map_dens <- ab_wmu %>%
   
 # gg_map_dens
 
-legend_title <- expression("Density (animals per km"^2*")")
+legend_title_dens <- expression("Density (animals per km"^2*")")
 
 # Using tmap
-tm_map_dens <-
-  tm_shape(ab_wmu) +
-  tm_fill(col = "Density", title = legend_title) +
+tm_map_dens <- ab_wmu_dens %>%
+  tm_shape() +
+  tm_fill(col = "Density",
+          style = "cont",
+          colorNA = "grey60",
+          textNA = "Missing",
+          title = legend_title_dens) +
   tm_borders(col = "black") +
-  tm_fill(col = "Density", title = legend_title)  +
   tm_text("WMU", size = 0.65) +
   tm_compass(type = "4star", size = 2, 
              position = c("left", "bottom")) +
@@ -260,9 +248,9 @@ the study region, calculated from the most recent aerial survey undertaken.
 # Interactive leaflet map
 
 # Define colours
-pal_1 <- colorNumeric(palette = "YlOrBr", domain = ab_wmu$Density)
+pal_1 <- colorNumeric(palette = "YlOrBr", domain = ab_wmu_dens$Density)
 # Create df of WMU centroids for labels
-df_centers <- ab_wmu %>%
+df_centers <- ab_wmu_dens %>%
   st_centroid() %>%
   as_Spatial()
 
@@ -282,7 +270,7 @@ ab_prov %>%
   addPolygons(color = "#070707", weight = 1, smoothFactor =  0.2, 
               opacity = 2.0) %>%
   
-  addPolygons(data = ab_wmu, color = "#070707", weight = 0.8,
+  addPolygons(data = ab_wmu_dens, color = "#070707", weight = 0.8,
               smoothFactor = 0.5, opacity = 1.0, fillOpacity = 0.75, 
               fillColor = ~ pal_1(Density), 
               popup = paste("WMU Name:", 
@@ -290,7 +278,8 @@ ab_prov %>%
                             "WMU Code:", 
                             "<b>", ab_wmu$WMU, "</b>", "<br>",
                             "Moose Density:", 
-                            "<b>", ab_wmu$Density, "</b>", "per km2", "<br>", 
+                            "<b>", ab_wmu_dens$Density, "</b>", "per km2", 
+                            "<br>", 
                             "<br>",
                             "<i>", "Last surveyed in", 
                             ab_wmu$Survey_Year, "<i>"),
@@ -308,7 +297,7 @@ ab_prov %>%
                       )) %>%
   
   # Legend layer
-  addLegend(data = ab_wmu, position = "bottomleft", pal = pal_1, bins = 6,
+  addLegend(data = ab_wmu_dens, position = "bottomleft", pal = pal_1, bins = 6,
             values = ~Density, 
             title = "Moose Density:<br>Animals per km2",
             opacity = 0.9, group = "Moose Density - Aerial Surveys") %>%
@@ -377,15 +366,15 @@ df_lamb2 <- df_lamb1 %>%
   left_join(df_nsurveys, by = "WMU") %>%
   mutate(Lambda_u = round(Lambda_u, digits = 2))
 
-
 # Join lambda information to WMU polygons
-ab_wmu <- ab_wmu %>%
+ab_wmu_lamb <- ab_wmu %>%
   left_join(df_lamb2, by = "WMU")
 
-legend_title2 <- "Lambda"
-
 # Create static map of lambda
-tm_map_lamb <- ab_wmu %>%
+
+legend_title_lamb <- "Lambda"
+
+tm_map_lamb <- ab_wmu_lamb %>%
   tm_shape() +
     tm_fill(col = "Lambda_u", 
             palette = "-RdBu", 
@@ -393,7 +382,7 @@ tm_map_lamb <- ab_wmu %>%
             style = "cont",
             colorNA = "grey60",
             textNA = "Missing",
-            title = legend_title2) +
+            title = legend_title_lamb) +
     tm_borders(col = "black") +
     tm_text("WMU", size = 0.65) +
   tm_compass(type = "4star", size = 2, 
@@ -445,10 +434,14 @@ df_demo <- df_all %>%
   mutate(ratio = if_else(is.na(ratio), MetricNum, ratio)) %>%
   select(WMU, StartYear, Response, ratio) %>%
   filter(!WMU == "518;519;529;530;531" & !WMU == "506;510" &
-         !WMU == "518;530;531" & !WMU == "530 North" & !WMU == "530 South")
+         !WMU == "518;530;531" & !WMU == "530 North" & !WMU == "530 South") %>%
+  mutate(WMU = as.numeric(if_else(WMU =="530 Full", "530", WMU)))
 
 df_demo1 <- df_demo %>%
+  # Important to group by both start year and reponse in order to retain two
+  # observations for each year of data (CalfCow & MaleFemale)
   group_by(StartYear, Response) %>%
+  # Calculate average ratios for each year, across WMU
   summarise(ratio_u = mean(ratio))
 
 demo1 <- df_demo1 %>%
@@ -460,36 +453,58 @@ demo1 <- df_demo1 %>%
 demo1
 
 df_demo2 <- df_demo %>%
+  # Important to group by both WMU and reponse in order to retain two
+  # observations for each WMU (CalfCow & MaleFemale)
   group_by(WMU, Response) %>%
   slice(which.max(StartYear))
 
-ab_wmu2 <- ab_wmu %>%
-  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
-  select(-zeroes) %>%
-  filter(WMU %in% df_demo2$WMU) %>%
+# Create static map of demographics
+
+c1 <- c('#f7fbff','#deebf7','#c6dbef',
+         '#9ecae1','#6baed6','#4292c6',
+         '#2171b5','#08519c','#08306b')
+c2 <- colorRampPalette(c1)
+legend_title_demo1 <- "Calves/Bulls per Cow"
+
+ab_wmu_demo <- ab_wmu %>%
+  mutate(WMU = as.numeric(WMU)) %>%
+  # Full join in order to retain both Response types
   full_join(df_demo2, by = "WMU") %>%
   select(WMUNIT_NAM, WMU, StartYear:ratio) %>%
-  st_transform("+init=epsg:4326") %>%
-  st_cast("POLYGON")
-
-# Create static map of demographics
-tm_map_demo <- ab_wmu2 %>%
+  mutate(bin = as.numeric(cut2(ratio, g = 10)),
+         colour = c2(10)[bin]) %>%
+  mutate(colour = if_else(is.na(colour), "#999999", colour))
+  
+  
+tm_map_demo1 <- ab_wmu_demo %>%
+  filter(Response == "CalfCow" | is.na(Response)) %>%
   tm_shape() +
-    tm_fill(col = "ratio", 
-            palette = "Blues",
+    tm_fill(col = "ratio",
+            palette = c1,
             style = "cont",
             colorNA = "grey60",
             textNA = "Missing",
-            title = legend_title2) +
+            title = legend_title_demo1) +
     tm_borders(col = "black") +
     tm_text("WMU", size = 0.65) +
   tm_compass(type = "4star", size = 2, 
              position = c("left", "bottom")) +
-  tm_scale_bar(position = c("left", "bottom"))
+  tm_scale_bar(position = c("left", "bottom")) +
+  tm_layout(title = "Calf:Cow", title.size = 1,
+            legend.title.size = 1, frame = FALSE)
 
-tm_map_lamb
+tm_map_demo2 <- ab_wmu_demo %>%
+  filter(Response == "MaleFemale" | is.na(Response)) %>%
+  tm_shape() +
+    tm_fill(col = "colour",
+            style = "cont") +
+    tm_borders(col = "black") +
+    tm_text("WMU", size = 0.65) +
+  tm_layout(title = "Bull:Cow", title.size = 1,
+            legend.title.size = 1, frame = FALSE)
 
-# Problem
+tmap_arrange(tm_map_demo1, tm_map_demo2)
+
   
 ```
 
