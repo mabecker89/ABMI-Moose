@@ -7,6 +7,7 @@ output:
     fig_caption: yes
     number_sections: yes
     toc: yes
+    toc_float: true
     code_folding: hide
     highlight: zenburn
     theme: readable
@@ -16,7 +17,7 @@ fontsize: 10.5pt
 urlcolor: blue
 ---
 
-```{r setup-cleanup, include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
 
 # Install packages
 library(tidyverse)
@@ -29,8 +30,9 @@ library(tmaptools)
 library(plotly)
 library(DT)
 library(Hmisc)
+library(knitr)
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(out.width='80%', fig.align = "center")
 
 # Import moose data
 df_abmi <- read_csv("./Data/Raw/ABMIMetrics.csv")
@@ -55,6 +57,8 @@ ab_prov <- st_transform(ab_prov, "+init=epsg:4326")
 ```
 
 # Executive Summary
+
+***
 
 We reviewed technical reports and peer-reviewed articles to assess the state of
 knowledge of moose in Alberta's Oil Sands Region (OSR). Our intention was to
@@ -90,6 +94,8 @@ changes in moose density at smaller scales in proximity to human disturbance.
 
 # Data Sources
 
+***
+
 Summarize data sources included in this review.
 
 ```{r }
@@ -100,9 +106,14 @@ Summarize data sources included in this review.
 
 ## Study Area
 
-WMUs that interest the oilsands region.
+The study area of this report is defined as all WMUs that intersect with the 
+Oil Sands Region of Alberta. 
+
+- Insert map here. 
 
 # Results
+
+***
 
 ## Population
 
@@ -142,6 +153,10 @@ df_dens2 <- df_dens1 %>%
   summarise(mean_dens = mean(Density),
             count = n(),
             se = sd(Density)/sqrt(count))
+
+```
+
+```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE, fig.cap = c("Plot 1", "Plot 2")}
 
 dens1 <- df_dens1 %>%
   filter(Density < 1) %>%
@@ -234,16 +249,16 @@ tm_map_dens <- ab_wmu_dens %>%
              position = c("left", "bottom")) +
   tm_scale_bar(position = c("left", "bottom"))
 
-tm_map_dens
+# tmap_save(tm_map_dens, filename = "./tmap_png/dens.png", height = 6)
 
-# tmap_leaflet(tm_map_dens)
+include_graphics("./tmap_png/dens.png")
 
 ```
 
 The interactive map below displays the moose density associated with each WMU in 
 the study region, calculated from the most recent aerial survey undertaken.
 
-``` {r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE, fig.dim = c(10,9)}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%', fig.height=10}
 
 # Interactive leaflet map
 
@@ -264,30 +279,31 @@ ab_prov %>%
   addResetMapButton() %>%
   addScaleBar(position = "bottomright", 
               options = scaleBarOptions(imperial = FALSE)) %>%
-  setView(lng = -113.89, lat = 56.53, zoom = 6.5) %>%
+  setView(lng = -113.89, lat = 56.53, zoom = 6) %>%
   
   # Polygon layers
   addPolygons(color = "#070707", weight = 1, smoothFactor =  0.2, 
               opacity = 2.0) %>%
   
-  addPolygons(data = ab_wmu_dens, color = "#070707", weight = 0.8,
+  addPolygons(data = ab_wmu_dens, 
+              color = "#070707", weight = 0.8,
               smoothFactor = 0.5, opacity = 1.0, fillOpacity = 0.75, 
               fillColor = ~ pal_1(Density), 
               popup = paste("WMU Name:", 
-                            "<b>", ab_wmu$WMUNIT_NAM, "</b>", "<br>",
+                            "<b>", ab_wmu_dens$WMUNIT_NAM, "</b>", "<br>",
                             "WMU Code:", 
-                            "<b>", ab_wmu$WMU, "</b>", "<br>",
+                            "<b>", ab_wmu_dens$WMU, "</b>", "<br>",
                             "Moose Density:", 
                             "<b>", ab_wmu_dens$Density, "</b>", "per km2", 
                             "<br>", 
                             "<br>",
                             "<i>", "Last surveyed in", 
-                            ab_wmu$Survey_Year, "<i>"),
+                            ab_wmu_dens$Survey_Year, "<i>"),
               group = "Moose Density - Aerial Surveys") %>%
   
   # Labels
   addLabelOnlyMarkers(data = df_centers, label = ~WMUNIT_NAM,
-                      group = "Moose Density - Aerial Surveys",
+                      group = "WMU Name Labels",
                       labelOptions = labelOptions(
                         noHide = TRUE,
                         textOnly = FALSE,
@@ -297,17 +313,19 @@ ab_prov %>%
                       )) %>%
   
   # Legend layer
-  addLegend(data = ab_wmu_dens, position = "bottomleft", pal = pal_1, bins = 6,
-            values = ~Density, 
-            title = "Moose Density:<br>Animals per km2",
-            opacity = 0.9, group = "Moose Density - Aerial Surveys") %>%
+  addLegend(data = ab_wmu_dens, position = "bottomleft", pal = pal_1, 
+            bins = c(0.1, 0.2, 0.3, 0.4, 0.5),
+            values = ~Density, na.label = "No Data", 
+            title = "Moose Density per km2",
+            opacity = 1.0, group = "Moose Density - Aerial Surveys") %>%
   
   # Layers control
   addLayersControl(overlayGroups = c("Imagery",
-                                     "Moose Density - Aerial Surveys"),
+                                     "Moose Density - Aerial Surveys",
+                                     "WMU Name Labels"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   
-  hideGroup("Imagery")
+  hideGroup(c("Imagery", "WMU Name Labels"))
 
 map_1
 
@@ -389,7 +407,9 @@ tm_map_lamb <- ab_wmu_lamb %>%
              position = c("left", "bottom")) +
   tm_scale_bar(position = c("left", "bottom"))
 
-tm_map_lamb
+# tmap_save(tm_map_lamb, filename = "./tmap_png/lamb.png", height = 6)
+
+include_graphics("./tmap_png/lamb.png")
 
 datatable(data = df_lamb2,
           class = 'cell-border stripe',
@@ -421,8 +441,9 @@ temporally or spatially.
 Figure of ratios over time?
 Map of ratios -> same diverging colour scale. 
 
-```{r}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
+# Prepare df of demographic data
 df_demo <- df_all %>%
   filter(Response == "CalfCow" | Response == "MaleFemale",
          Species == "Moose",
@@ -444,28 +465,47 @@ df_demo1 <- df_demo %>%
   # Calculate average ratios for each year, across WMU
   summarise(ratio_u = mean(ratio))
 
+# Create scatterplot of demographics (ratios) over time, averaged across WMU
+
 demo1 <- df_demo1 %>%
   ggplot(aes(x = StartYear, y = ratio_u)) +
   geom_point() +
+  # Facet wrap to visualize CowCalf and MaleFemale separately. 
   facet_wrap(~ Response) +
-  geom_smooth(method = "loess", se = TRUE)
+  # Add trendline. Maybe "lm" method is better here?
+  geom_smooth(method = "loess", se = FALSE) +
+  scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
+  labs(y = "Ratio (per Cow)",
+       x = "") +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 10, angle = 45, hjust = 1),
+        axis.text.y = element_text(size = 10),
+        panel.grid.minor = element_blank())
 
 demo1
 
+```
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%'}
+
+# Create static map of demographics
+
+# Prepare df of most recent datapoints for each WMU
 df_demo2 <- df_demo %>%
   # Important to group by both WMU and reponse in order to retain two
   # observations for each WMU (CalfCow & MaleFemale)
   group_by(WMU, Response) %>%
   slice(which.max(StartYear))
 
-# Create static map of demographics
-
+# Prepare colors (Blues)
 c1 <- c('#f7fbff','#deebf7','#c6dbef',
          '#9ecae1','#6baed6','#4292c6',
          '#2171b5','#08519c','#08306b')
 c2 <- colorRampPalette(c1)
+
 legend_title_demo1 <- "Calves/Bulls per Cow"
 
+# Prepare spatial data
 ab_wmu_demo <- ab_wmu %>%
   mutate(WMU = as.numeric(WMU)) %>%
   # Full join in order to retain both Response types
@@ -475,7 +515,7 @@ ab_wmu_demo <- ab_wmu %>%
          colour = c2(10)[bin]) %>%
   mutate(colour = if_else(is.na(colour), "#999999", colour))
   
-  
+# Map 1 (CalfCow)  
 tm_map_demo1 <- ab_wmu_demo %>%
   filter(Response == "CalfCow" | is.na(Response)) %>%
   tm_shape() +
@@ -493,6 +533,7 @@ tm_map_demo1 <- ab_wmu_demo %>%
   tm_layout(title = "Calf:Cow", title.size = 1,
             legend.title.size = 1, frame = FALSE)
 
+# Map 2 (MaleFemale)
 tm_map_demo2 <- ab_wmu_demo %>%
   filter(Response == "MaleFemale" | is.na(Response)) %>%
   tm_shape() +
@@ -503,10 +544,15 @@ tm_map_demo2 <- ab_wmu_demo %>%
   tm_layout(title = "Bull:Cow", title.size = 1,
             legend.title.size = 1, frame = FALSE)
 
-tmap_arrange(tm_map_demo1, tm_map_demo2)
+# Combine two maps
+# tm_map_demo_both <- tmap_arrange(tm_map_demo1, tm_map_demo2)
 
-  
+# tmap_save(tm_map_demo_both, filename = "./tmap_png/demo.png")
+
+include_graphics("./tmap_png/demo.png")
+
 ```
+
 
 ### Survival
 
@@ -519,7 +565,23 @@ Table?
 
 ## Distribution
 
+***
+
 Here is were we include ABMI relative abundance predictions - right?
+
+Two other reviewed documents estimated moose density as a function of 
+environmental variables. The first (Schneider et al. 2000) examined broad scale 
+changes to moose density across Northern Alberta using random stratified block 
+aerial surveys. Moose median densities increased from 0.25 per km2 in the green 
+zone, which is characterized by forestry as the dominant land use, to 0.4 per 
+km2 in the white zone, which is primarily agriculture and human settlement. 
+Moose density was also found to be higher in the foothills and mixedwood regions. 
+Schneider et al. (2000) also measured changes in moose density along gradients
+of human activity and found that density was higher closer to the white zone and
+with decreasing latitude. Ferguson and Keith (1982) found that, within 500 m of
+either high or low use cross country ski trails in Elk Island National Park, 
+moose density increased or decreased respectively, compared to farther than
+500 m. 
 
 ## Behaviour
 
