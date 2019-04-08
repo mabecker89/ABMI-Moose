@@ -17,7 +17,7 @@ fontsize: 10.5pt
 urlcolor: blue
 ---
 
-```{r include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
 # Install packages
 library(tidyverse)
@@ -33,26 +33,6 @@ library(Hmisc)
 library(knitr)
 
 knitr::opts_chunk$set(out.width='80%', fig.align = "center")
-
-# Import moose data
-df_abmi <- read_csv("./Data/Raw/ABMIMetrics.csv")
-df_all <- read_csv("./Data/Raw/Metrics.csv")
-df_gov_recent <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018_Density.csv")
-
-# Import spatial data (LAR, OSR, WMUs in study region)
-
-ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
-                  stringsAsFactors = FALSE, quiet = TRUE)
-ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
-                  stringsAsFactors = FALSE, quiet = TRUE)
-
-ab_wmu <- ab_wmu %>%
-  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
-  select(-c(zeroes, Shape_STAr, Shape_STLe)) %>%
-  st_transform("+init=epsg:4326") %>%
-  st_cast("POLYGON")
-  
-ab_prov <- st_transform(ab_prov, "+init=epsg:4326")
 
 ```
 
@@ -85,12 +65,58 @@ revealed a downward trend in population density, due to the behavioural
 responses of moose to human disturbance, we recommend further work exploring 
 changes in moose density at smaller scales in proximity to human disturbance.
 
+# Study Area
 
-```{r  include = TRUE, echo = TRUE, message = FALSE, warning = FALSE, eval = TRUE}
+***
 
+In this report, the study area is defined as that of the OSR of Alberta and all 
+the WMUs that intersect it geographically (Figure 1).   
 
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.cap="Figure 1. Study Area - Oil Sands Region boundary outlined in red."}
+
+# Import spatial data from shapefiles located in SpatialData folder
+
+ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+
+ab_osr <- st_read("./SpatialData/AB_OSR.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+
+# Clean up and projection
+ab_wmu <- ab_wmu %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-c(zeroes, Shape_STAr, Shape_STLe)) %>%
+  # st_transform("+init=epsg:4326") %>%
+  st_cast("POLYGON")
+  
+# ab_prov <- st_transform(ab_prov, "+init=epsg:4326")
+# ab_osr <- st_transform(ab_osr, "+init=epsg:4326")
+
+# Create static map (tmap)
+
+tm_map_aoi <- ab_prov %>%
+  tm_shape() +
+    tm_borders(col = "black") +
+  tm_shape(ab_wmu) +
+    tm_fill(col = "grey90") +
+    tm_borders(col = "black", lwd = 1) +
+  tm_shape(ab_osr) +
+    tm_borders(col = "brown", lwd = 5) +
+  tm_compass(type = "4star", size = 2, position = c("left", "bottom")) +
+  tm_scale_bar(position = c("left", "bottom")) +
+  tm_layout(title = "", title.size = 1,
+            legend.title.size = 1, frame = FALSE)
+
+# tm_map_aoi
+
+# tmap_save(tm_map_aoi, filename = "./tmap_png/aoi.png", width = 4)
+
+include_graphics("./tmap_png/aoi.png")
 
 ```
+
 
 # Data Sources
 
@@ -98,18 +124,14 @@ changes in moose density at smaller scales in proximity to human disturbance.
 
 Summarize data sources included in this review.
 
-```{r }
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
-
+# Import raw moose data
+df_abmi <- read_csv("./Data/Raw/ABMIMetrics.csv")
+df_all <- read_csv("./Data/Raw/Metrics.csv")
+df_gov_recent <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018_Density.csv")
 
 ```
-
-## Study Area
-
-The study area of this report is defined as all WMUs that intersect with the 
-Oil Sands Region of Alberta. 
-
-- Insert map here. 
 
 # Results
 
@@ -138,7 +160,7 @@ df_dens1 <- df_all %>%
          !is.na(WMU),
          !WMU == "506;510" & !WMU == "530 North" & !WMU == "530 South") %>%
   mutate(WMU = as.numeric(str_replace_all(WMU, "530 Full", "530"))) %>%
-  select(WMU, StartYear, MetricNum) %>%
+  select(WMU, StartYear, MetricNum, CIL, CIU) %>%
   rename(Survey_Year = StartYear,
          Density = MetricNum) %>%
   full_join(df_gov_recent, by = c("WMU", "Survey_Year")) %>%
@@ -164,8 +186,9 @@ dens1 <- df_dens1 %>%
   geom_line() +
   geom_point(size = 2.5) +
   scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
-  # labs(y = expression(Density~(per~km^2)), x = "") + 
-  theme_bw() +
+  # labs(y = expression(Density~(per~km^2)), x = "") +
+  labs(y = "Moose Density per square km", x = "") +
+  theme_classic() +
   theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
         axis.text.y = element_text(size = 10))
 
@@ -182,13 +205,15 @@ dens2 <- df_dens2 %>%
   geom_errorbar(aes(ymin = mean_dens - se, ymax = mean_dens + se, 
                     width = 0.1)) +
   scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
-  labs(y = expression(Density~(per~km^2)), x = "") +
-  theme_bw() +
+  labs(y = expression(Density~(per~km^2)), x = "",
+       size = "Number of WMUs Surveyed") +
+  theme_classic() +
   theme(axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
         axis.text.y = element_text(size = 10),
-        panel.border = element_blank(),
-        panel.grid.minor = element_blank())
-
+        legend.position = "bottom")
+        # panel.border = element_blank(),
+        # panel.grid.minor = element_blank()) 
+  
 dens2
 
 # dens2_p <- ggplotly(dens2)
@@ -215,7 +240,8 @@ df_dens_curr <- df_dens1 %>%
   slice(which.max(Survey_Year)) %>%
   mutate(Method = ifelse(Survey_Year >= 2014, 
                          "Distance Sampling",
-                         "Random Block/Gasaway"))
+                         "Random Block/Gasaway")) %>%
+  ungroup()
 
 ab_wmu_dens <- ab_wmu %>%
   left_join(df_dens_curr, by = "WMU") %>%
@@ -249,6 +275,8 @@ tm_map_dens <- ab_wmu_dens %>%
              position = c("left", "bottom")) +
   tm_scale_bar(position = c("left", "bottom"))
 
+# tm_map_dens
+
 # tmap_save(tm_map_dens, filename = "./tmap_png/dens.png", height = 6)
 
 include_graphics("./tmap_png/dens.png")
@@ -262,15 +290,22 @@ the study region, calculated from the most recent aerial survey undertaken.
 
 # Interactive leaflet map
 
+# Set projections
+ab_prov_proj <- st_transform(ab_prov, "+init=epsg:4326")
+ab_osr_proj <- st_transform(ab_osr, "+init=epsg:4326")
+ab_wmu_dens_proj <- st_transform(ab_wmu_dens, "+init=epsg:4326")
+
 # Define colours
 pal_1 <- colorNumeric(palette = "YlOrBr", domain = ab_wmu_dens$Density)
+
 # Create df of WMU centroids for labels
 df_centers <- ab_wmu_dens %>%
   st_centroid() %>%
   as_Spatial()
 
+# Create leaflet map
 map_1 <-
-ab_prov %>%
+ab_prov_proj %>%
   leaflet() %>%
   addTiles() %>%
   addProviderTiles("Stamen.TerrainBackground") %>%
@@ -280,26 +315,34 @@ ab_prov %>%
   addScaleBar(position = "bottomright", 
               options = scaleBarOptions(imperial = FALSE)) %>%
   setView(lng = -113.89, lat = 56.53, zoom = 6) %>%
+  addMapPane(name = "OSR Boundary", zIndex = 420) %>%
+  addMapPane(name = "Other", zIndex = 410) %>%
   
   # Polygon layers
   addPolygons(color = "#070707", weight = 1, smoothFactor =  0.2, 
               opacity = 2.0) %>%
   
-  addPolygons(data = ab_wmu_dens, 
+  addPolylines(data = ab_osr_proj, color = "#070707", weight = 3,
+              smoothFactor = 0.2, opacity = 3.0, fill = FALSE,
+              group = "OSR Boundary",
+              options = leafletOptions(pane = "OSR Boundary")) %>%
+  
+  addPolygons(data = ab_wmu_dens_proj, 
               color = "#070707", weight = 0.8,
               smoothFactor = 0.5, opacity = 1.0, fillOpacity = 0.75, 
               fillColor = ~ pal_1(Density), 
               popup = paste("WMU Name:", 
-                            "<b>", ab_wmu_dens$WMUNIT_NAM, "</b>", "<br>",
+                            "<b>", ab_wmu_dens_proj$WMUNIT_NAM, "</b>", "<br>",
                             "WMU Code:", 
-                            "<b>", ab_wmu_dens$WMU, "</b>", "<br>",
+                            "<b>", ab_wmu_dens_proj$WMU, "</b>", "<br>",
                             "Moose Density:", 
-                            "<b>", ab_wmu_dens$Density, "</b>", "per km2", 
+                            "<b>", ab_wmu_dens_proj$Density, "</b>", "per km2", 
                             "<br>", 
                             "<br>",
                             "<i>", "Last surveyed in", 
-                            ab_wmu_dens$Survey_Year, "<i>"),
-              group = "Moose Density - Aerial Surveys") %>%
+                            ab_wmu_dens_proj$Survey_Year, "<i>"),
+              group = "Moose Density - Aerial Surveys",
+              options = leafletOptions(pane = "Other")) %>%
   
   # Labels
   addLabelOnlyMarkers(data = df_centers, label = ~WMUNIT_NAM,
@@ -313,7 +356,7 @@ ab_prov %>%
                       )) %>%
   
   # Legend layer
-  addLegend(data = ab_wmu_dens, position = "bottomleft", pal = pal_1, 
+  addLegend(data = ab_wmu_dens_proj, position = "bottomleft", pal = pal_1, 
             bins = c(0.1, 0.2, 0.3, 0.4, 0.5),
             values = ~Density, na.label = "No Data", 
             title = "Moose Density per km2",
@@ -322,7 +365,8 @@ ab_prov %>%
   # Layers control
   addLayersControl(overlayGroups = c("Imagery",
                                      "Moose Density - Aerial Surveys",
-                                     "WMU Name Labels"),
+                                     "WMU Name Labels",
+                                     "OSR Boundary"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   
   hideGroup(c("Imagery", "WMU Name Labels"))
@@ -331,11 +375,140 @@ map_1
 
 ```
 
-Comparison with ABMI WMU-level density estimates
+The ABMI uses remotely deployed cameras (RCs) to assess the occurrence and 
+density of mammals across Alberta. The RCs are deployed at sampling sites that 
+are distributed along a 20 km systematic grid across the province. Four cameras
+are deployed per site, two with lure and two without lure. In the OSR, 20% of 
+sites are visited each year. RCs are relatively easy and cost-effective to 
+deploy and allow for spatially explicit analysis of animal densities and 
+occupancy. RCs also have the ability to provide more detailed information such 
+as sex- and age-ratios, body condition, and behaviour as well as community level
+metrics such as species richness and phenology (although the ABMI does not 
+currently collect this information from RCs).
 
-Scatterplot? 
+The ABMI estimates the density of mammals such as moose from RC data using the 
+cumulative residency time (CRT) that the species is captured on camera. This 
+method estimates density by assuming that animals use (and move across) the 
+sampled area randomly such that the total residency time in any given location 
+is a function of the number of animals in a fixed area. In addition, RCs can 
+provide increased spatial resolution in the estimation of density when compared
+to Government of Alberta aerial surveys, including support for more detailed
+habitat modeling and predicted relative abundance across a heterogeneous
+landscape. However, the widespread use of RCs in Alberta for ecological purposes
+is still in a nascent phase, and questions remain about the precision, accuracy,
+and required sampling effort of CRT analysis. 
 
-Discuss process for calculation? 
+Here we compare the ABMI's CRT-derived moose density estimates to those 
+estimated by the Government of Alberta using distance sampling (i.e., aerial 
+surveys conducted since 2014). We used the WMU as the sample unit, allowing us 
+to compare the density estimate directly over the years 2014-2018. The ABMI 
+estimates were calculated using all RC data from the years 2015-2017, whereas 
+aerial survey density estimates were calculated from a singe year sample within 
+the the five year time period. There were fourteen WMUs in the OSR that we were 
+able to obtain moose density estimates from both sources. Table below displays
+the results, and corresponding confidence intervals in estimates, and Figure 
+presents the relationship between each set of density estimates.
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
+
+df_abmi1 <- df_abmi %>%
+  mutate(CI_abmi = paste(CIL, CIU, sep = ", ")) %>%
+  rename(Density_abmi = Density) %>%
+  mutate(Survey_Year = NA) %>%
+  na_if("NA, NA") %>%
+  select(-c(CIL, CIU))
+
+df_dens_tab <- df_dens_curr %>%
+  filter(Method == "Distance Sampling") %>%
+  mutate(WMU = as.numeric(WMU)) %>%
+  mutate(CI_gov = paste(CIL, CIU, sep = ", ")) %>%
+  na_if("NA, NA") %>%
+  mutate(SampleSize = NA) %>%
+  rename(Density_gov = Density,
+         Source = Method) %>%
+  select(WMU, Source, Survey_Year, SampleSize, Density_gov, CI_gov) %>%
+  bind_rows(df_abmi1) %>%
+  mutate(Source = str_replace_all(Source, "Distance Sampling", "GoA")) %>%
+  arrange(desc(WMU)) %>%
+  mutate(WMU = as.character(WMU),
+         Density_gov = round(Density_gov, digits = 2),
+         Density_abmi = round(Density_abmi, digits = 2),
+         CI_gov = )
+  
+
+mutate(Lambda_u = round(Lambda_u, digits = 2))
+
+datatable(data = df_dens_tab, filter = "top", rownames = FALSE,
+          caption = "Table 1. WMU-level Density Estimates Using Data from Aerial
+          Surveys and ABMI Remote Cameras",
+          class = 'cell-border-stripe',
+          colnames = c("WMU", "Source", "Aerial Survey Year", 
+                       "ABMI Camera Deployments",
+                       "Density - Aerial", "90% CI - Aerial", 
+                       "Density - ABMI", "90% CI - ABMI"),
+          options = list(pageLength = 10, scrollX = TRUE))
+
+```
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, fig.cap="Density Comparison"}
+  
+# Prepare density data for comparison between sources
+df_dens_comp <- df_dens_curr %>%
+  filter(Method == "Distance Sampling") %>%
+  mutate(WMU = as.numeric(WMU)) %>%
+  rename(Density_gov = Density) %>%
+  select(WMU, Density_gov) %>%
+  full_join(df_abmi, by = "WMU") %>%
+  filter(!is.na(Density_gov) & !is.na(Density)) %>%
+  rename(Density_abmi = Density) %>%
+  select(WMU, Density_gov, Density_abmi)
+  
+# Create scatterplot of density estimates
+dens3 <- df_dens_comp %>%
+  # Filter out outlier
+  filter(Density_abmi < 4) %>%
+  ggplot(aes(x = Density_gov, y = Density_abmi)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  theme_classic() +
+  labs(x = "Density Estimated via Aerial Surveys",
+       y = "Density Estimated via ABMI RCs")
+
+dens3
+
+```
+
+The ABMI CRT density estimates are generally higher than those produced by 
+aerial survey distance sampling, but are weakly correlated. In addition, the 
+ABMI estimates of moose density exhibit higher uncertainty, as shown by wider
+90% confidence intervals. This uncertainty is related to the number of cameras
+placed in each WMU (Sample Size, in the above table), such that confidence 
+increases when more cameras are available in a sampling unit. Most of the WMUs
+in the OSR have less than 100 deployments, and therefore would be expected to 
+have moose density confidence limits that are as wide as the mean (i.e., +/- 50%
+of the mean if they were symmetrical) after one complete monitoring rotation 
+(Huggard, 2019). This means that only large changes in moose population would be
+detected with statistical confidence. However, across the entire OSR, where 
+there were between 174-268 ABMI RC deployments per year between 2015 and 2017,
+confidence intervals are smaller. For the entire OSR, moose densites were 0.68,
+0.54, and 0.41 animals per km2 in 2015, 2016, and 2017, respectively [^1].
+
+[^1] This decline is likely due to cameras being put out in the field 
+increasingly early each year. This means more sampling in the winter, which 
+generally leads to less detections and lower density estimates (Huggard, 2019). 
+The intent is to develop a seasonal correction procedure once the 2018 RC data 
+arrivces. 
+
+According to Huggard (2019), moose density estimates from RCs are likely to be 
+biased upwards. The first reason for this is a practical element of using RCs: 
+cameras are usually placed in small openings so that they are not obscured by 
+vegetation. However, moose tend to use these areas preferentially for foraging 
+(at least in the summer), leading to overestimates of density. The second reason
+is that moose are also attracted to the cameras (lure or no lure). In order to 
+get accurate absolute density estimates from RCs, a calibration procedure using
+other methods (such as aerial surveys) will likely be required. However, RC data
+can still be useful as relative abundance estimates, and be used for habitat 
+modeling (see section on Distribution) and for long-term trend analysis. 
 
 ### Lambda
 
@@ -413,7 +586,7 @@ include_graphics("./tmap_png/lamb.png")
 
 datatable(data = df_lamb2,
           class = 'cell-border stripe',
-          colnames = c("Wildlife Management Unit", "Lambda",
+          colnames = c("WMU", "Lambda",
                        "Number of Surveys"),
           rownames = FALSE,
           width = 500,
