@@ -31,6 +31,7 @@ library(plotly)
 library(DT)
 library(Hmisc)
 library(knitr)
+library(colourvalues)
 
 knitr::opts_chunk$set(out.width='80%', fig.align = "center")
 
@@ -76,13 +77,18 @@ the WMUs that intersect it geographically (Figure 1).
 
 # Import spatial data from shapefiles located in SpatialData folder
 
-ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
-                  stringsAsFactors = FALSE, quiet = TRUE)
-ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
-                  stringsAsFactors = FALSE, quiet = TRUE)
-
+# Oil Sands Region (OSR)
 ab_osr <- st_read("./SpatialData/AB_OSR.shp", 
                   stringsAsFactors = FALSE, quiet = TRUE)
+# WMUs intersected with the OSR
+ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+# Provincial polygon
+ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
+                  stringsAsFactors = FALSE, quiet = TRUE)
+# ABMI 1km pixels
+pixel_1km <- st_read("./SpatialData/ABMI_Grid_1KM_OSM_v3.shp",
+                     stringsAsFactors = FALSE, quiet = TRUE)
 
 # Clean up and projection
 ab_wmu <- ab_wmu %>%
@@ -113,7 +119,7 @@ tm_map_aoi <- ab_prov %>%
 
 # tmap_save(tm_map_aoi, filename = "./tmap_png/aoi.png", width = 4)
 
-include_graphics("./tmap_png/aoi.png")
+include_graphics("./png_files/aoi.png")
 
 ```
 
@@ -127,9 +133,15 @@ Summarize data sources included in this review.
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
 # Import raw moose data
+
+# ABMI densities
 df_abmi <- read_csv("./Data/Raw/ABMIMetrics.csv")
+# Data from Government reports
 df_all <- read_csv("./Data/Raw/Metrics.csv")
+# Density data from more recent Government reports
 df_gov_recent <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018_Density.csv")
+# ABMI relative abundance predictions
+abmi_pred <- read_csv("./Data/Raw/Moose_km2-summary.csv")
 
 ```
 
@@ -279,7 +291,7 @@ tm_map_dens <- ab_wmu_dens %>%
 
 # tmap_save(tm_map_dens, filename = "./tmap_png/dens.png", height = 6)
 
-include_graphics("./tmap_png/dens.png")
+include_graphics("./png_files/dens.png")
 
 ```
 
@@ -420,37 +432,35 @@ df_abmi1 <- df_abmi %>%
 
 df_dens_tab <- df_dens_curr %>%
   filter(Method == "Distance Sampling") %>%
-  mutate(WMU = as.numeric(WMU)) %>%
-  mutate(CI_gov = paste(CIL, CIU, sep = ", ")) %>%
+  mutate(WMU = as.numeric(WMU),
+         CIL = round(CIL, digits = 2),
+         CIU = round(CIU, digits = 2),
+         CI_gov = paste(CIL, CIU, sep = ", "),
+         Density = round(Density, digits = 2),
+         SampleSize = NA) %>%
   na_if("NA, NA") %>%
-  mutate(SampleSize = NA) %>%
   rename(Density_gov = Density,
          Source = Method) %>%
-  select(WMU, Source, Survey_Year, SampleSize, Density_gov, CI_gov) %>%
+  select(WMU, Source, Survey_Year, Density_gov, CI_gov, SampleSize) %>%
   bind_rows(df_abmi1) %>%
   mutate(Source = str_replace_all(Source, "Distance Sampling", "GoA")) %>%
-  arrange(desc(WMU)) %>%
-  mutate(WMU = as.character(WMU),
-         Density_gov = round(Density_gov, digits = 2),
-         Density_abmi = round(Density_abmi, digits = 2),
-         CI_gov = )
-  
-
-mutate(Lambda_u = round(Lambda_u, digits = 2))
+  arrange(WMU) %>%
+  mutate(WMU = as.character(WMU))
 
 datatable(data = df_dens_tab, filter = "top", rownames = FALSE,
           caption = "Table 1. WMU-level Density Estimates Using Data from Aerial
           Surveys and ABMI Remote Cameras",
           class = 'cell-border-stripe',
           colnames = c("WMU", "Source", "Aerial Survey Year", 
-                       "ABMI Camera Deployments",
-                       "Density - Aerial", "90% CI - Aerial", 
-                       "Density - ABMI", "90% CI - ABMI"),
+                       "Density (Aerial)", "90% CI - Aerial",
+                       "ABMI Camera Deployments", "Density (ABMI)", 
+                       "90% CI - ABMI"),
           options = list(pageLength = 10, scrollX = TRUE))
 
 ```
-
-```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, fig.cap="Density Comparison"}
+<br>
+<br>
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, fig.cap="Figure. Density Comparison"}
   
 # Prepare density data for comparison between sources
 df_dens_comp <- df_dens_curr %>%
@@ -482,7 +492,7 @@ The ABMI CRT density estimates are generally higher than those produced by
 aerial survey distance sampling, but are weakly correlated. In addition, the 
 ABMI estimates of moose density exhibit higher uncertainty, as shown by wider
 90% confidence intervals. This uncertainty is related to the number of cameras
-placed in each WMU (Sample Size, in the above table), such that confidence 
+placed in each WMU (Deployments in the above table), such that confidence 
 increases when more cameras are available in a sampling unit. Most of the WMUs
 in the OSR have less than 100 deployments, and therefore would be expected to 
 have moose density confidence limits that are as wide as the mean (i.e., +/- 50%
@@ -491,13 +501,13 @@ of the mean if they were symmetrical) after one complete monitoring rotation
 detected with statistical confidence. However, across the entire OSR, where 
 there were between 174-268 ABMI RC deployments per year between 2015 and 2017,
 confidence intervals are smaller. For the entire OSR, moose densites were 0.68,
-0.54, and 0.41 animals per km2 in 2015, 2016, and 2017, respectively [^1].
+0.54, and 0.41 animals per km$^2$ in 2015, 2016, and 2017, respectively [^1].
 
-[^1] This decline is likely due to cameras being put out in the field 
+[^1]: This decline is likely due to cameras being put out in the field 
 increasingly early each year. This means more sampling in the winter, which 
 generally leads to less detections and lower density estimates (Huggard, 2019). 
 The intent is to develop a seasonal correction procedure once the 2018 RC data 
-arrivces. 
+arrives. 
 
 According to Huggard (2019), moose density estimates from RCs are likely to be 
 biased upwards. The first reason for this is a practical element of using RCs: 
@@ -580,9 +590,11 @@ tm_map_lamb <- ab_wmu_lamb %>%
              position = c("left", "bottom")) +
   tm_scale_bar(position = c("left", "bottom"))
 
+# tm_map_lamb
+
 # tmap_save(tm_map_lamb, filename = "./tmap_png/lamb.png", height = 6)
 
-include_graphics("./tmap_png/lamb.png")
+include_graphics("./png_files/lamb.png")
 
 datatable(data = df_lamb2,
           class = 'cell-border stripe',
@@ -629,7 +641,9 @@ df_demo <- df_all %>%
   select(WMU, StartYear, Response, ratio) %>%
   filter(!WMU == "518;519;529;530;531" & !WMU == "506;510" &
          !WMU == "518;530;531" & !WMU == "530 North" & !WMU == "530 South") %>%
-  mutate(WMU = as.numeric(if_else(WMU =="530 Full", "530", WMU)))
+  mutate(WMU = as.numeric(if_else(WMU =="530 Full", "530", WMU)),
+         Response = str_replace_all(Response, "MaleFemale", "Bull:Cow"),
+         Response = str_replace_all(Response, "CalfCow", "Calf:Cow"))
 
 df_demo1 <- df_demo %>%
   # Important to group by both start year and reponse in order to retain two
@@ -641,6 +655,7 @@ df_demo1 <- df_demo %>%
 # Create scatterplot of demographics (ratios) over time, averaged across WMU
 
 demo1 <- df_demo1 %>%
+  mutate(Response = factor(Response, levels = c("Calf:Cow", "Bull:Cow"))) %>%
   ggplot(aes(x = StartYear, y = ratio_u)) +
   geom_point() +
   # Facet wrap to visualize CowCalf and MaleFemale separately. 
@@ -690,7 +705,7 @@ ab_wmu_demo <- ab_wmu %>%
   
 # Map 1 (CalfCow)  
 tm_map_demo1 <- ab_wmu_demo %>%
-  filter(Response == "CalfCow" | is.na(Response)) %>%
+  filter(Response == "Calf:Cow" | is.na(Response)) %>%
   tm_shape() +
     tm_fill(col = "ratio",
             palette = c1,
@@ -706,9 +721,9 @@ tm_map_demo1 <- ab_wmu_demo %>%
   tm_layout(title = "Calf:Cow", title.size = 1,
             legend.title.size = 1, frame = FALSE)
 
-# Map 2 (MaleFemale)
+# Map 2 (BullCow)
 tm_map_demo2 <- ab_wmu_demo %>%
-  filter(Response == "MaleFemale" | is.na(Response)) %>%
+  filter(Response == "Bull:Cow" | is.na(Response)) %>%
   tm_shape() +
     tm_fill(col = "colour",
             style = "cont") +
@@ -722,7 +737,7 @@ tm_map_demo2 <- ab_wmu_demo %>%
 
 # tmap_save(tm_map_demo_both, filename = "./tmap_png/demo.png")
 
-include_graphics("./tmap_png/demo.png")
+include_graphics("./png_files/demo.png")
 
 ```
 
@@ -736,11 +751,145 @@ telemetry.
 
 Table?
 
-## Distribution
-
 ***
 
-Here is were we include ABMI relative abundance predictions - right?
+## Distribution
+
+The following section details research related to the distribution of moose in 
+the OSR, such as predictions of moose relative abundance or density across 
+various land cover types.
+
+### Habitat Associations 
+
+The ABMI uses data collected from RCs to estimate species-specific habitat 
+models, and then uses these models to predict the relative abundance of each 
+species across the landscape. Explanatory variables in these models include 
+prevalance of nearby human footprint and native landcover, as well as spatial
+and climate covariates. Models are estimated for two separate regions of the 
+province, a north and a south region, and different combinations of covariates
+are used for each. In this report, we consider only the north regional models.
+
+Separate models are estimated for camera deployments during the 
+summer and the winter, in order to account for differing detection rates as 
+vegetation grows and obscures the camera field of view, as well as seasonal 
+differences in species' habitat use patterns. Using RC data from 2015-2018,
+these models were used to show how moose relative abundance differed among 
+vegetation and human footprint in northern region (which is comprised of the
+Boreal and Foothills natural regions) - see Figures X and X for the winter and 
+summer models, respectively. Predicted moose abundance in each habitat type is 
+shown with bars, and vertical lines indicate 90% confidence intervals. Only 
+habitat and human footprint categories that are statistically separable are
+displayed.
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%'}
+
+include_graphics("./png_files/Veg+HF_figure_MooseSummer.png")
+
+include_graphics("./png_files/Veg+HF_figure_MooseWinter.png")
+
+```
+
+In the summer, the models of habitat association suggest that moose show a 
+preference for shrub and grassland areas, as well as marshes. In addition, moose
+prefer older deciduous forest, but younger mixedwood areas. In the winter, an
+opposite preference for mixedwood is found. 
+
+The ABMI uses these habitat association models, plus models describing how 
+species vary spatially and with climate gradients, to predict species abundance
+in 1 km$^2$ spatial units under both *current* and *reference* conditions. 
+Current condition predictions are made based on the vegetation and human 
+footprint currently present in each 1 km$^2$ unit, whereas reference condition
+predictions are made after human footprint has been erased and the native 
+vegetation 'backfilled' in the unit based on the surrounding area. Figure X
+
+
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
+
+# This is where we will likely want to connect to cure4insect once the package
+# is updated and the mammal results have been uploaded.
+
+
+
+```
+
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+
+# Interactive leaflet map
+
+library(leafgl)
+
+pixel_1km_aoi <- pixel_1km %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-zeroes) %>%
+  select(GRID_LABEL, WMUNIT_NAM, WMU) %>%
+  rename(LinkID = GRID_LABEL) %>%
+  # Join in Moose prediction data
+  left_join(abmi_pred, by = "LinkID") %>%
+  # Set projection
+  st_transform("+init=epsg:4326") %>%
+  st_cast("POLYGON") %>%
+  # Subset
+  filter(!is.na(Curr)) %>%
+  mutate(q_curr = as.numeric(cut2(Curr, g = 100))) %>%
+  select(q_curr)
+
+# Define colors
+
+c1 <- c("blue", "white", "red")
+c2 <- colorRampPalette(c1)
+colours <- c2(100)[pixel_1km_aoi$q_curr]
+
+colours1 <- (convert_colors(colours)) / 255
+
+pal_2 <- colorNumeric(c("blue", "white", "red"),
+                      domain = pixel_1km_aoi$q_curr)
+
+map_2 <- 
+  ab_wmu_dens %>%
+  st_transform("+init=epsg:4326") %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Stamen.TerrainBackground") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Imagery") %>%
+  addFullscreenControl() %>%
+  addResetMapButton() %>%
+  addScaleBar(position = "bottomright", 
+              options = scaleBarOptions(imperial = FALSE)) %>%
+  setView(lng = -113.07, lat = 56.53, zoom = 7) %>%
+  
+  # Polygon layers
+  addPolygons(color = "#070707", weight = 2,
+              smoothFactor = 0.2, opacity = 2.0,
+              popup = paste("WMU Name:", 
+                            "<b>", ab_wmu_dens$WMUNIT_NAM, "</b>", "<br>",
+                            "WMU Code:", 
+                            "<b>", ab_wmu_dens$WMU, "</b>", "<br>",
+                            "Moose Density:", 
+                            "<b>", ab_wmu_dens$Density, "</b>", "per km2", "<br>", 
+                            "<br>",
+                            "<i>", "Last surveyed in", 
+                            ab_wmu_dens$Survey_Year, "<i>")) %>%
+  
+  addGlPolygons(data = pixel_1km_aoi,
+                color = colours1,
+                group = "ABMI Relative Abundance Predictions",
+                opacity = 0.75) %>%
+  
+  # Layers control
+  addLayersControl(overlayGroups = c("Imagery", 
+                   "ABMI Relative Abundance Predictions"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  
+  hideGroup("Imagery")
+  
+map_2
+
+
+
+```
+
+hello
 
 Two other reviewed documents estimated moose density as a function of 
 environmental variables. The first (Schneider et al. 2000) examined broad scale 
