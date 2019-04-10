@@ -11,6 +11,7 @@ output:
     code_folding: hide
     highlight: zenburn
     theme: readable
+    self_contained: false
   pdf_document:
     toc: yes
 fontsize: 10.5pt
@@ -32,14 +33,14 @@ library(DT)
 library(Hmisc)
 library(knitr)
 library(colourvalues)
+library(leafgl)
+library(rmapshaper)
 
 knitr::opts_chunk$set(out.width='80%', fig.align = "center")
 
 ```
 
 # Executive Summary
-
-***
 
 We reviewed technical reports and peer-reviewed articles to assess the state of
 knowledge of moose in Alberta's Oil Sands Region (OSR). Our intention was to
@@ -54,7 +55,7 @@ OSR.
 
 The compiled metrics were used to construct estimates or describe the state of 
 the moose population in the OSR. Average moose population density, among the 
-Wildlife Management Units (WMUs) sampled, in the OSR is 0.17 per km2. We 
+Wildlife Management Units (WMUs) sampled, in the OSR is 0.17 per km$^2$. We 
 uncovered no clear trend in moose density across years or WMUs, although the 
 sample size was often small. Similarly, moose calf:cow and bull:cow ratios were
 quite variable but also exhibited no clear trend in time or space. According to
@@ -66,9 +67,9 @@ revealed a downward trend in population density, due to the behavioural
 responses of moose to human disturbance, we recommend further work exploring 
 changes in moose density at smaller scales in proximity to human disturbance.
 
-# Study Area
-
 ***
+
+# Study Area
 
 In this report, the study area is defined as that of the OSR of Alberta and all 
 the WMUs that intersect it geographically (Figure 1).   
@@ -124,9 +125,9 @@ include_graphics("./png_files/aoi.png")
 ```
 
 
-# Data Sources
-
 ***
+
+# Data Sources
 
 Summarize data sources included in this review.
 
@@ -143,11 +144,13 @@ df_gov_recent <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018_Density
 # ABMI relative abundance predictions
 abmi_pred <- read_csv("./Data/Raw/Moose_km2-summary.csv")
 
+# Hunter harvest surveys?
+
 ```
 
-# Results
-
 ***
+
+# Results
 
 ## Population
 
@@ -458,8 +461,7 @@ datatable(data = df_dens_tab, filter = "top", rownames = FALSE,
           options = list(pageLength = 10, scrollX = TRUE))
 
 ```
-<br>
-<br>
+
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, fig.cap="Figure. Density Comparison"}
   
 # Prepare density data for comparison between sources
@@ -620,11 +622,9 @@ Across all years and WMUs for which ratios were reported,
 + The mean calf:cow ratio was **0.52**;
 + The mean bull:cow ratio was **0.51**.
 
-As shown in Figures, no clear trend in sex of calf ratios was observed either
+As shown in Figure X, no clear trend in sex of calf ratios was observed either
 temporally or spatially.
 
-Figure of ratios over time?
-Map of ratios -> same diverging colour scale. 
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
@@ -741,15 +741,12 @@ include_graphics("./png_files/demo.png")
 
 ```
 
-
 ### Survival
 
 We extracted either adult or calf survival values from three reviewed documents
 (9% of the total) for a combined 10 survival estimates. Calf survival was lower
 than adult survival and was higher when estimated with GPS telemetry vs. radio
 telemetry. 
-
-Table?
 
 ***
 
@@ -759,7 +756,7 @@ The following section details research related to the distribution of moose in
 the OSR, such as predictions of moose relative abundance or density across 
 various land cover types.
 
-### Habitat Associations 
+### ABMI Habitat Associations 
 
 The ABMI uses data collected from RCs to estimate species-specific habitat 
 models, and then uses these models to predict the relative abundance of each 
@@ -781,7 +778,7 @@ shown with bars, and vertical lines indicate 90% confidence intervals. Only
 habitat and human footprint categories that are statistically separable are
 displayed.
 
-```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width='100%'}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%",fig.cap=c("Figure X. Moose Habitat Associations in Northern Alberta - Summer", "Figure X. Moose Habitat Associations in Northern Alberta - Winter")}
 
 include_graphics("./png_files/Veg+HF_figure_MooseSummer.png")
 
@@ -800,9 +797,11 @@ in 1 km$^2$ spatial units under both *current* and *reference* conditions.
 Current condition predictions are made based on the vegetation and human 
 footprint currently present in each 1 km$^2$ unit, whereas reference condition
 predictions are made after human footprint has been erased and the native 
-vegetation 'backfilled' in the unit based on the surrounding area. Figure X
-
-
+vegetation 'backfilled' in the unit based on the surrounding area. Figure X 
+displays a map of the ABMI relative abundance predictions for moose across the 
+OSR, using RC data from 2015-2017. Pixels depicted in red are predicted to have
+the highest abundance for moose, whereas areas of dark blue moose are expected 
+to be less abundant or absent. 
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
@@ -813,11 +812,9 @@ vegetation 'backfilled' in the unit based on the surrounding area. Figure X
 
 ```
 
-```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%"}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.height=10}
 
 # Interactive leaflet map
-
-library(leafgl)
 
 pixel_1km_aoi <- pixel_1km %>%
   separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
@@ -826,13 +823,14 @@ pixel_1km_aoi <- pixel_1km %>%
   rename(LinkID = GRID_LABEL) %>%
   # Join in Moose prediction data
   left_join(abmi_pred, by = "LinkID") %>%
+  filter(!is.na(Curr)) %>%
   # Set projection
   st_transform("+init=epsg:4326") %>%
   st_cast("POLYGON") %>%
+  # ms_simplify(sys = TRUE) %>%
   # Subset
-  filter(!is.na(Curr)) %>%
   mutate(q_curr = as.numeric(cut2(Curr, g = 100))) %>%
-  select(q_curr)
+  select(Curr, q_curr)
 
 # Define colors
 
@@ -846,7 +844,7 @@ pal_2 <- colorNumeric(c("blue", "white", "red"),
                       domain = pixel_1km_aoi$q_curr)
 
 map_2 <- 
-  ab_wmu_dens %>%
+  ab_wmu %>%
   st_transform("+init=epsg:4326") %>%
   leaflet() %>%
   addTiles() %>%
@@ -856,58 +854,73 @@ map_2 <-
   addResetMapButton() %>%
   addScaleBar(position = "bottomright", 
               options = scaleBarOptions(imperial = FALSE)) %>%
-  setView(lng = -113.07, lat = 56.53, zoom = 7) %>%
+  setView(lng = -113.89, lat = 56.53, zoom = 6) %>%
   
   # Polygon layers
   addPolygons(color = "#070707", weight = 2,
               smoothFactor = 0.2, opacity = 2.0,
               popup = paste("WMU Name:", 
-                            "<b>", ab_wmu_dens$WMUNIT_NAM, "</b>", "<br>",
+                            "<b>", ab_wmu$WMUNIT_NAM, "</b>", "<br>",
                             "WMU Code:", 
-                            "<b>", ab_wmu_dens$WMU, "</b>", "<br>",
-                            "Moose Density:", 
-                            "<b>", ab_wmu_dens$Density, "</b>", "per km2", "<br>", 
-                            "<br>",
-                            "<i>", "Last surveyed in", 
-                            ab_wmu_dens$Survey_Year, "<i>")) %>%
+                            "<b>", ab_wmu$WMU, "</b>", "<br>")) %>%
   
   addGlPolygons(data = pixel_1km_aoi,
                 color = colours1,
                 group = "ABMI Relative Abundance Predictions",
                 opacity = 0.75) %>%
   
+  addLegend(data = pixel_1km_aoi, position = "bottomleft", pal = pal_2, 
+            bins = 10, values = ~q_curr, 
+            title = "Relative Abundance of Moose", 
+            opacity = 0.9, group = "ABMI Relative Abundance Predictions") %>%
+  
   # Layers control
   addLayersControl(overlayGroups = c("Imagery", 
-                   "ABMI Relative Abundance Predictions"),
+                                     "ABMI Relative Abundance Predictions"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   
   hideGroup("Imagery")
   
 map_2
 
-
-
 ```
 
-hello
+### Other Literature
+
+Fisher and Burton (2018) studied the relative abundance of various mammal
+species in the OSR of Alberta using camera traps, sampling from 62 sites between
+October 2011 - October 2014. They concluded that human disturbance in the region
+has created "winners and losers" among the mammal community, and that moose are
+among those species whose relative abundance has been reduced. Anthropogenic 
+landscape variables, such as cutlines, well sites, and pipelines, were found to
+have a net negative response on moose occurence frequency; however, several 
+anthropogenic categories, such as cutblocks and 3D seismic lines, had a positive
+effect. Natural features such as lowland/upland spruce, lowland/upland 
+mixedwood, and open wetlands were also found to have a positive effect on moose
+abundance. Taken together, moose displayed a net negative response to landscape
+level disturbance in the OSR. 
 
 Two other reviewed documents estimated moose density as a function of 
 environmental variables. The first (Schneider et al. 2000) examined broad scale 
 changes to moose density across Northern Alberta using random stratified block 
-aerial surveys. Moose median densities increased from 0.25 per km2 in the green 
-zone, which is characterized by forestry as the dominant land use, to 0.4 per 
-km2 in the white zone, which is primarily agriculture and human settlement. 
-Moose density was also found to be higher in the foothills and mixedwood regions. 
-Schneider et al. (2000) also measured changes in moose density along gradients
-of human activity and found that density was higher closer to the white zone and
-with decreasing latitude. Ferguson and Keith (1982) found that, within 500 m of
-either high or low use cross country ski trails in Elk Island National Park, 
-moose density increased or decreased respectively, compared to farther than
-500 m. 
+aerial surveys. Moose median densities increased from 0.25 per km$^2$ in the 
+green zone, which is characterized by forestry as the dominant land use, to 0.4 
+per km$^2$ in the white zone, which is primarily agriculture and human 
+settlement. Moose density was also found to be higher in the foothills and 
+mixedwood regions. Schneider et al. (2000) also measured changes in moose 
+density along gradients of human activity and found that density was higher 
+closer to the white zone and with decreasing latitude. Ferguson and Keith (1982)
+found that, within 500 m of either high or low use cross country ski trails in 
+Elk Island National Park, moose density increased or decreased respectively, 
+compared to farther than 500 m. 
+
+***
 
 ## Behaviour
 
 ### Selection
+
+Eight of the documents we reviewed reported effects of moose selection or 
 
 ### Use
 
@@ -915,11 +928,35 @@ moose density increased or decreased respectively, compared to farther than
 
 # Discussion
 
+We reviewed government and non-government reports, and peer reviewed papers to 
+assess the state of knowledge concerning the impact of human disturbance on
+moose populations in Oil Sands Region (OSR) of Alberta. Moose are a well-studied
+species in Canada broadly and in Alberta specifically. We were able to summarize
+moose density across both time and space, calculate geometric rates of change 
+(lambda), and report on calf:cow and bull:cow ratios in several WMUs within and
+adjacent to the region. Further, we were able to assess moose behavioural 
+responses to several types of human disturbance at multiple scales. In general,
+we did not reveal any strong trends in the density of behaviour of moose as a 
+function of time, space or human disturbance; however, certain studies have 
+reported that moose abundance is negatively impacted by anthropogenic 
+disturbance in the OSR region (Fisher and Burton, 2018).
 
-# Impacts of various human footprint / landcover
+Currently, moose density in the OSR is comparable to that of the rest of the 
+boreal region of Canada. The years over which we summarized various population
+parameters (1993-2016) correspond roughly to those over which oil and gas 
+exploration and extraction in Northeastern Alberta increased significantly 
+(Schindler 2010). We did not uncover any downward trends in any of these 
+parameters over this time interval, and the summaries we calculated are 
+characterized by variation between both years and study areas (WMUs). Plotting 
+density and lambda spatially (Figures X) reveals that both values decrease with
+increasing latitude (i.e., further north), which may be due to the more intense
+oil and gas extraction processes north of the city of Ft. McMurray and 
+disruption to predation in the area (Neilson and Boutin 2017). However, such an 
+effect is not clear from this review as the density trend may be due to habitat
+or other effects that existed prior to mine development. As aerial surveys using
+the distance sampling method 
 
-Section with qualitative discussion regarding impacts of various HF, 
-disturbance, and landcover on moose population parameters. 
+
 
 
 
