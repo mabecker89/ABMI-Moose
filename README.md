@@ -14,7 +14,7 @@ The following interactive maps of various moose population parameters, data, and
 
 + Density
 + Aerial observations from surveys
-+ ABMI relative abundance predictions (1km^2 grid)
++ ABMI relative abundance predictions (1km<sup>2<sup> grid)
 
 
 
