@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-SpatialData/
+# Data/SpatialData
 # docs/
 OSMMooseReview_EN-MB_v2_files/
 
