@@ -8,9 +8,9 @@ This repository holds data, scripts, and reports associated with Moose work for 
 
 An updated version (April 12, 2019) of the moose report is available:
 
-[*Knowledge Assessment of Moose (Alces alces) in Alberta's Oil Sands Region*](https://mabecker89.github.io/ABMI-Moose/OSMMooseReview_EN-MB_v2)
+[*Knowledge Assessment of Moose (Alces alces) in Alberta's Oil Sands Region*](https://mabecker89.github.io/OSM-Synthesis-Moose/OSMMooseReview_EN-MB_v2)
 
-The following interactive maps of various moose population parameters, data, and models are [available](https://mabecker89.github.io/ABMI-Moose/sightings_predictions_v1):
+The following interactive maps of various moose population parameters, data, and models are available here:
 
 + Density
 + Aerial observations from surveys
