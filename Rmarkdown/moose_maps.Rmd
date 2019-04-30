@@ -27,13 +27,13 @@ library(Hmisc)
 library(colourvalues)
 
 # Import data
-ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+ab_wmu <- st_read("./Data/SpatialData/AB_WMU-OSR-Intersect.shp", 
                   stringsAsFactors = FALSE, quiet = TRUE)
 
-pixel_1km <- st_read("./SpatialData/ABMI_Grid_1KM_OSM_v3.shp",
+pixel_1km <- st_read("./Data/SpatialData/ABMI_Grid_1KM_OSM_v3.shp",
                      stringsAsFactors = FALSE, quiet = TRUE)
 
-ab_osr <- st_read("./SpatialData/AB_WMU-OSR-Dissolve.shp",
+ab_osr <- st_read("./Data/SpatialData/AB_WMU-OSR-Dissolve.shp",
                   stringsAsFactors = FALSE, quiet = TRUE)
 
 gov_obs <- read_csv("./Data/Raw/OSM_Ungulate_Survey_Data_2013-2018.csv")
@@ -103,12 +103,19 @@ estimated moose density.
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
 # Define colours
-pal_1 <- colorNumeric(palette = "YlOrBr", domain = ab_wmu$Density)
+pal_1 <- colorNumeric(palette = "YlOrBr", domain = ab_wmu_dens_proj$Density)
 
 # Generate leaflet map
 
+# Create df of WMU centroids for labels
+df_centers <- ab_wmu_dens_proj %>%
+  st_centroid() %>%
+  as_Spatial()
+
+# Create leaflet map
 map_1 <-
 ab_osr %>%
+  st_transform("+init=epsg:4326") %>%
   leaflet() %>%
   addTiles() %>%
   addProviderTiles("Stamen.TerrainBackground") %>%
@@ -117,40 +124,63 @@ ab_osr %>%
   addResetMapButton() %>%
   addScaleBar(position = "bottomright", 
               options = scaleBarOptions(imperial = FALSE)) %>%
-  setView(lng = -113.07, lat = 56.53, zoom = 7) %>%
+  setView(lng = -113.89, lat = 56.53, zoom = 6) %>%
+  addMapPane(name = "OSR Boundary", zIndex = 420) %>%
+  addMapPane(name = "Other", zIndex = 410) %>%
   
   # Polygon layers
-  addPolygons(color = "#070707", weight = 1, smoothFactor =  0.2, 
-              opacity = 2.0) %>%
+  addPolylines(color = "#070707", weight = 3,
+              smoothFactor = 0.2, opacity = 3.0, fill = FALSE,
+              group = "OSR Boundary",
+              options = leafletOptions(pane = "OSR Boundary")) %>%
   
-  addPolygons(data = ab_wmu, color = "#070707", weight = 0.8,
+  addPolygons(data = ab_wmu_dens_proj, 
+              color = "#070707", weight = 0.8,
               smoothFactor = 0.5, opacity = 1.0, fillOpacity = 0.75, 
               fillColor = ~ pal_1(Density), 
               popup = paste("WMU Name:", 
-                            "<b>", ab_wmu$WMUNIT_NAM, "</b>", "<br>",
+                            "<b>", ab_wmu_dens_proj$WMUNIT_NAM, "</b>", "<br>",
                             "WMU Code:", 
-                            "<b>", ab_wmu$WMU, "</b>", "<br>",
+                            "<b>", ab_wmu_dens_proj$WMU, "</b>", "<br>",
                             "Moose Density:", 
-                            "<b>", ab_wmu$Density, "</b>", "per km2", "<br>", 
+                            "<b>", ab_wmu_dens_proj$Density, "</b>", "per km2", 
+                            "<br>", 
                             "<br>",
                             "<i>", "Last surveyed in", 
-                            ab_wmu$Survey_Year, "<i>"),
-              group = "Moose Density - Aerial Surveys") %>%
+                            ab_wmu_dens_proj$Survey_Year, "<i>"),
+              group = "Moose Density - Aerial Surveys",
+              options = leafletOptions(pane = "Other")) %>%
+  
+  # Labels
+  addLabelOnlyMarkers(data = df_centers, label = ~WMUNIT_NAM,
+                      group = "WMU Name Labels",
+                      labelOptions = labelOptions(
+                        noHide = TRUE,
+                        textOnly = FALSE,
+                        textsize = "10px",
+                        opacity = 1,
+                        offset = c(0,0)
+                      )) %>%
   
   # Legend layer
-  addLegend(data = ab_wmu, position = "bottomleft", pal = pal_1, bins = 6,
-            values = ~Density, 
-            title = "Moose Density:<br>Animals per km2",
-            opacity = 0.9, group = "Moose Density - Aerial Surveys") %>%
+  addLegend(data = ab_wmu_dens_proj, position = "bottomleft", pal = pal_1, 
+            bins = c(0.1, 0.2, 0.3, 0.4, 0.5),
+            values = ~Density, na.label = "No Data", 
+            title = "Moose Density per km2",
+            opacity = 1.0, group = "Moose Density - Aerial Surveys") %>%
   
   # Layers control
   addLayersControl(overlayGroups = c("Imagery",
-                                     "Moose Density - Aerial Surveys"),
+                                     "Moose Density - Aerial Surveys",
+                                     "WMU Name Labels",
+                                     "OSR Boundary"),
                    options = layersControlOptions(collapsed = FALSE)) %>%
   
-  hideGroup("Imagery")
+  hideGroup(c("Imagery", "WMU Name Labels"))
 
 map_1
+
+saveWidget(map_1, file = "density.html")
 
 ```
 
@@ -231,8 +261,124 @@ map_2
 ```
 
 
+```{r}
+
+map_2 <- 
+  ab_wmu_dens_proj %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Stamen.TerrainBackground") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Imagery") %>%
+  addFullscreenControl() %>%
+  addResetMapButton() %>%
+  addScaleBar(position = "bottomright", 
+              options = scaleBarOptions(imperial = FALSE)) %>%
+  # addMapPane(name = "WMU Boundaries", zIndex = 420) %>%
+  # addMapPane(name = "Everything Else", zIndex = 410) %>%
+  setView(lng = -113.07, lat = 56.53, zoom = 7) %>%
+  
+  # Polygon layers
+  addPolygons(color = "#070707", weight = 2,
+              smoothFactor = 0.2, opacity = 2.0,
+              popup = paste("WMU Name:", 
+                            "<b>", ab_wmu$WMUNIT_NAM, "</b>", "<br>",
+                            "WMU Code:", 
+                            "<b>", ab_wmu$WMU, "</b>", "<br>",
+                            "Moose Density:", 
+                            "<b>", ab_wmu$Density, "</b>", "per km2", "<br>", 
+                            "<br>",
+                            "<i>", "Last surveyed in", 
+                            ab_wmu$Survey_Year, "<i>")) %>%
+  
+  addHeatmap(data = gov_obs_sf, radius = 10, blur = 18, minOpacity = 4.0,
+             group = "Aerial Observations Heatmap") %>%
+  
+  # Layers control
+  addLayersControl(overlayGroups = c("Aerial Observations Heatmap", "Imagery"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  
+  hideGroup("Imagery")
+  
+map_2
+
+saveWidget(map_2, "heatmap.html")
 
 
+```
+
+
+```{r}
+
+pixel_1km_aoi <- pixel_1km %>%
+  separate(WMUNIT_COD, into = c("zeroes", "WMU"), sep = 2, remove = FALSE) %>%
+  select(-zeroes) %>%
+  select(GRID_LABEL, WMUNIT_NAM, WMU) %>%
+  rename(LinkID = GRID_LABEL) %>%
+  # Join in Moose prediction data
+  left_join(abmi_pred, by = "LinkID") %>%
+  filter(!is.na(Curr)) %>%
+  # Set projection
+  st_transform("+init=epsg:4326") %>%
+  st_cast("POLYGON") %>%
+  ms_simplify(sys = TRUE) %>%
+  # Subset
+  mutate(q_curr = as.numeric(cut2(Curr, g = 100))) %>%
+  select(q_curr)
+
+# Define colors
+
+c1 <- c("blue", "white", "red")
+c2 <- colorRampPalette(c1)
+colours <- c2(100)[pixel_1km_aoi$q_curr]
+
+colours1 <- (convert_colors(colours)) / 255
+
+pal_2 <- colorNumeric(c("blue", "white", "red"),
+                      domain = pixel_1km_aoi$q_curr)
+
+map_3 <- 
+  ab_wmu %>%
+  st_transform("+init=epsg:4326") %>%
+  leaflet() %>%
+  addTiles() %>%
+  addProviderTiles("Stamen.TerrainBackground") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Imagery") %>%
+  addFullscreenControl() %>%
+  addResetMapButton() %>%
+  addScaleBar(position = "bottomright", 
+              options = scaleBarOptions(imperial = FALSE)) %>%
+  setView(lng = -113.89, lat = 56.53, zoom = 6) %>%
+  
+  # Polygon layers
+  addPolygons(color = "#070707", weight = 2,
+              smoothFactor = 0.2, opacity = 2.0,
+              popup = paste("WMU Name:", 
+                            "<b>", ab_wmu$WMUNIT_NAM, "</b>", "<br>",
+                            "WMU Code:", 
+                            "<b>", ab_wmu$WMU, "</b>", "<br>")) %>%
+  
+  addGlPolygons(data = pixel_1km_aoi,
+                color = colours1,
+                group = "ABMI Relative Abundance Predictions",
+                opacity = 0.75) %>%
+  
+  addLegend(data = pixel_1km_aoi, position = "bottomleft", pal = pal_2, 
+            bins = 10, values = ~q_curr, 
+            title = "Relative Abundance of Moose", 
+            opacity = 0.9, group = "ABMI Relative Abundance Predictions") %>%
+  
+  # Layers control
+  addLayersControl(overlayGroups = c("ABMI Relative Abundance Predictions",
+                                     "Imagery"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  
+  hideGroup("Imagery")
+
+
+saveWidget(map_3, "relabund.html", selfcontained = FALSE)
+
+
+```
 
 
 
