@@ -12,9 +12,11 @@ An updated version (April 12, 2019) of the moose report is available:
 
 The following interactive maps of various moose population parameters, data, and models are available here:
 
-+ Density
-+ Aerial observations from surveys
-+ ABMI relative abundance predictions (1km<sup>2</sup> grid)
++ [Density](https://mabecker89.github.io/OSM-Synthesis-Moose/density)
++ [Aerial observations from surveys](https://mabecker89.github.io/OSM-Synthesis-Moose/heatmap)
++ [ABMI relative abundance predictions (1km<sup>2</sup> grid)](https://mabecker89.github.io/OSM-Synthesis-Moose/relabund)
+
+
 
 
 
