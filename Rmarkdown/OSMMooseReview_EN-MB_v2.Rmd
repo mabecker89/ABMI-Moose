@@ -9,6 +9,7 @@ output:
     math_jax: null
     theme: readable
     toc: yes
+    toc_depth: 4
     toc_float: yes
     self_contained: FALSE
   pdf_document:
@@ -35,7 +36,7 @@ library(colourvalues)
 library(leafgl)
 library(rmapshaper)
 
-# Set up working directory - Users to adjust as needed.
+# Set up working directory - collaborators to adjust as needed.
 knitr::opts_knit$set(root.dir = "C:/Users/mabec/Documents/R/ABMI-Moose")
 
 # Set global options for figures 
@@ -48,22 +49,21 @@ knitr::opts_chunk$set(out.width='80%', fig.align = "center")
 We reviewed technical reports and peer-reviewed articles to assess the state of
 knowledge of moose in Alberta's Oil Sands Region (OSR). Our intention was to
 elucidate what is known concerning moose in the region, and in particular, what
-the effect of oil and gas extraction has been on the moose population. In our 
-review we extracted relevant estimates of moose population state variables, such 
+the effect of oil and gas extraction has been on the moose population. 
+
+We extracted relevant estimates of moose population state variables, such 
 as density and demographics, and in some cases made calculations or inferences 
 based on these estimates (e.g. calculation of lambda). In addition to these 
 estimates, we describe the findings of moose monitoring efforts in the region, 
 in particular how moose respond to various natural and anthropogenic features. 
-We use remote camera data from the Alberta Biodiversity Monitoring Institute's 
-(ABMI) program to corroborate this information and provide additional context.  
 
 Average moose population density among the Wildlife Management Units (WMUs) 
 sampled in the OSR, as determined by aerial surveys conducted by the Government 
 of Alberta between 2014-2018, is 0.17 individuals per km$^2$. Between 1993-2013,
 moose density averaged 0.18 individuals per km$^2$. To fully assess whether 
-there are any trends in time or space, further work would need to be done to 
-calibrate density estimates from different sources or methods, and more sampling
-will need to be conducted over the coming years. 
+there are any trends in time or space, further work is required to calibrate 
+density estimates from different sources or methods. Further sampling in coming 
+years will also help address these research questions. 
  
 According to several studies, moose were sensitive to human disturbance, 
 generally exhibiting low use and avoidance of human features across multiple 
@@ -71,31 +71,34 @@ scales of measurement (e.g. Boutin et al. 2015). Other research has found that
 moose relative abundance decreases in relation to certain anthropogenic features
 such as cutlines, well sites, trails, and pipelines (Fisher & Burton, 2018). 
 
-+ This assessment will attempt to synthesize the findings from this literature
-and report on areas of both agreement and contradictory findings. 
+*To add:*
+
++ More detail around reporting of published effect sizes for various impacts and 
+disturbances.
 
 ***
 
 # Study Area
 
-In this report, the study area is defined as that of the OSR of Alberta and all 
-the WMUs that intersect it geographically (Figure 1).   
+In this report, the study area is defined as that of Alberta's Oil Sands Region
+and all the Wildlife Management Units that intersect it geographically (Figure 1).
+A total of 37 WMUs meet this criteria.  
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="60%", fig.cap="Figure 1. Study Area - Oil Sands Region boundary outlined in red."}
 
 # Import spatial data from shapefiles located in SpatialData folder
 
 # Oil Sands Region (OSR)
-ab_osr <- st_read("./SpatialData/AB_OSR.shp", 
+ab_osr <- st_read("./Data/SpatialData/AB_OSR.shp", 
                   stringsAsFactors = FALSE, quiet = TRUE)
 # WMUs intersected with the OSR
-ab_wmu <- st_read("./SpatialData/AB_WMU-OSR-Intersect.shp", 
+ab_wmu <- st_read("./Data/SpatialData/AB_WMU-OSR-Intersect.shp", 
                   stringsAsFactors = FALSE, quiet = TRUE)
 # Provincial polygon
-ab_prov <- st_read("./SpatialData/AB_Prov.shp", 
+ab_prov <- st_read("./Data/SpatialData/AB_Prov.shp", 
                   stringsAsFactors = FALSE, quiet = TRUE)
 # ABMI 1km pixels
-pixel_1km <- st_read("./SpatialData/ABMI_Grid_1KM_OSM_v3.shp",
+pixel_1km <- st_read("./Data/SpatialData/ABMI_Grid_1KM_OSM_v3.shp",
                      stringsAsFactors = FALSE, quiet = TRUE)
 
 # Clean up and projection
@@ -125,19 +128,21 @@ tm_map_aoi <- ab_prov %>%
 
 include_graphics("./png_files/aoi.png")
 
-getwd()
-
 ```
 
 ***
 
 # Data Sources
 
-Summarize data sources included in this review.
+The following data sources will be used in this review:
 
 + Government of Alberta aerial surveys (1993-2019)
 + Peer-reviewed and grey literature 
 + Camera monitoring programs (e.g., Boreal Deer Project, ABMI)
+
+*To add:*
+
++ Data from other camera monitoring efforts
 + Hunter harvest surveys
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
@@ -163,38 +168,49 @@ abmi_pred <- read_csv("./Data/Raw/Moose_km2-summary.csv")
 
 ## Population Parameters
 
-Commonly used methods for estimating population parameters of moose in the 
-province include aerial random block surveys, transect surveys, and distance 
-sampling. The latter approach, which was adopted by the Government of Alberta 
-for ungulate sampling in 2014, includes an estimate of detectability, which 
-helps to correct for sightability bias inherent to the methods such as 
-stratified random block (Peters et al. 2014). This technique accounts for 
-variation in detectability by assuming that animals close to the observer are
-more easily detected than when the animal is farther away (Buckland et al. 
-1993). A recent review found that distance sampling, with the sightability
-correction, likely provides more accurate estimates of parameters such as 
-density and with greater efficiency, i.e. less flight hours (Peters et al 2014).
-In this review we report results from both eras (1993-2013 using random block,
-and 2014-present using distance sampling) but urge caution in direct comparison
-between estimates using different methods. Without a detection adjustment, 
-random block surveys are more likely to have underestimated moose populations.
+In Alberta, aerial surveys have been heavily relied upon to generate estimates
+of ungulate population parameters, including moose, at the WMU scale. Prior to
+2014, a stratified random block approach was most commonly used; however, the 
+Government of Alberta has since adopted distance sampling as the preferred 
+aerial survey approach. Distance sampling includes an estimate of detectability, 
+which helps to correct for sightability biases inherent to previous methods 
+(Peters et al. 2014). This technique accounts for variation in detectability by 
+assuming that animals close to the observer are more easily detected than when 
+the animal is farther away (Buckland et al. 1993). A recent review found that 
+distance sampling, with the sightability correction, likely provides more 
+accurate estimates of parameters such as density and with greater efficiency, 
+i.e. less flight hours (Peters et al 2014). In this review we report results 
+from both eras (1993-2013 using random block, and 2014-present using distance 
+sampling) but urge caution in direct comparison between estimates using 
+different methods. Without a detection adjustment, random block surveys are more 
+likely to have underestimated moose populations.
+
+Other methods that have also been used to study moose in the OSR include GPS 
+telemetry (e.g. Boutin et al. 2015), remote camera traps (e.g. Fisher & Burton, 
+2018), snowtrack surveys (e.g. Toews et al. 2017), and scat collection (e.g. 
+Wasser et al. 2011). 
+
+*To add:*
+
++ Expand upon other methods used to study moose population parameters. 
 
 ### Density
 
 #### Estimates from Aerial Surveys
 
 Density of moose in the OSR was estimated using the most recent government 
-reports for each WMU in the region 
+aerial survey reports from each WMU in the region. 
 
-We included density estimates from 19 government reports. The average density of
-moose within WMUs of the OSR between 2014 and 2018 (the interval over which the
-Government of Alberta began using the distance sampling method for aerial 
-surveys) is 0.17 individuals per km$^2$. From 1993 to 2013, when the random 
+The average density of moose within WMUs of the OSR between 2014 and 2018 
+(the interval over which the Government of Alberta began using the distance 
+sampling method) is 0.17 individuals per km$^2$. From 1993 to 2013, when the random 
 block/Gasaway method was used, moose density averaged 0.18 individuals per 
 km$^2$.
 
-+ Note that data from 2019 aerial surveys will be available in early May - a 
-total of 5 WMUs were flown this year. 
+*To add:*
+
++ Data from 2019 aerial surveys will be available in early May - a total of 5 
+WMUs were flown this year. 
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
@@ -252,18 +268,19 @@ dens1_p
 
 ```
 
-Figure 3 displays the mean annual moose density across surveyed WMUs over time. 
-The error bars are one standard error. The same outlier was removed from this
+Figure 3 displays the mean annual moose density across surveyed WMUs from 1993
+to 2018. The error bars are one standard error. The same outlier was removed from this
 plot. 
 
-```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="90%", fig.cap="Figure 3. Mean annual moose density in WMUs of the Oil Sands Region."}
+```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, out.width="100%", fig.cap="Figure 3. Mean annual moose density in WMUs of the Oil Sands Region."}
 
 dens2 <- df_dens2 %>%
   filter(mean_dens < 1.2) %>%
+  mutate(Method = as.factor(if_else(Survey_Year > 2013, "Distance", "Random Block"))) %>%
   ggplot(aes(x = Survey_Year, y = mean_dens)) +
-  geom_point(aes(size = count)) +
   geom_errorbar(aes(ymin = mean_dens - se, ymax = mean_dens + se, 
                     width = 0.1)) +
+  geom_point(aes(size = count, color = Method)) +
   scale_x_continuous(breaks = c(1995, 2000, 2005, 2010, 2015)) +
   labs(y = expression(Density~(per~km^2)), x = "",
        size = "Number of WMUs Surveyed") +
@@ -272,7 +289,7 @@ dens2 <- df_dens2 %>%
         axis.text.y = element_text(size = 10),
         legend.position = "bottom")
         # panel.border = element_blank(),
-        # panel.grid.minor = element_blank()) 
+        # panel.grid.minor = element_blank())
   
 dens2
 
@@ -428,29 +445,12 @@ map_1
 
 The use of remote cameras (RCs) to monitor animal populations has grown 
 substantially in recent years as technological progress has been made (Steenweg
-et al. 2016). 
-
-+ To be included: more background regarding the proliferation in the use of 
-remote cameras in this context. 
-
-##### ABMI Remote Cameras 
-
-The ABMI uses remotely deployed cameras to assess the occurrence and 
-density of mammals across Alberta. The RCs are deployed at sampling sites that 
-are distributed along a 20 km systematic grid across the province. Four cameras
-are deployed per site, two with lure and two without lure. In the OSR, 20% of 
-sites are visited each year. RCs are relatively easy and cost-effective to 
-deploy and allow for spatially explicit analysis of animal densities and 
-occupancy. RCs also have the ability to provide more detailed information such 
-as sex- and age-ratios, body condition, and behaviour as well as community level
-metrics such as species richness and phenology (although the ABMI does not 
-currently collect this information from RCs).
-
-The ABMI estimates the density of mammals such as moose from RC data using the 
-cumulative residency time (CRT) that the species is captured on camera. This 
-method estimates density by assuming that animals use (and move across) the 
-sampled area randomly such that the total residency time in any given location 
-is a function of the number of animals in a fixed area. In addition, RCs can 
+et al. 2016). In northern Alberta, RCs are regularly used to monitor mammal 
+populations as they can be relatively easy and cost-effective to deploy and 
+allow for spatially explicit analysis of animal densities and occupancy across
+the landscape. RCs also have the ability to provide more detailed information
+such as sex and age ratios, body condition, and behaviour as well as community
+level metrics such as species richness and phenology. In addition, RCs can 
 provide increased spatial resolution in the estimation of density when compared
 to Government of Alberta aerial surveys, including support for more detailed
 habitat modeling and predicted relative abundance across a heterogeneous
@@ -458,15 +458,32 @@ landscape. However, the widespread use of RCs in Alberta for ecological purposes
 is still in a nascent phase, and questions remain about the precision, accuracy,
 and required sampling effort of CRT analysis. 
 
+*To add:*
+
++ Additional background regarding the proliferation in the use of 
+remote cameras in this context. 
+
+##### ABMI Remote Cameras 
+
+The ABMI uses remotely deployed cameras to assess the occurrence and 
+density of mammals across Alberta. The RCs are deployed at sampling sites that 
+are distributed along a 20 km systematic grid across the province. In the OSR, 
+20% of sites are visited each year. The ABMI estimates the density of mammals 
+such as moose from RC data using the cumulative residency time (CRT) that the 
+species is captured on camera. This method estimates density by assuming that 
+animals use (and move across) the sampled area randomly such that the total 
+residency time in any given location is a function of the number of animals in a
+fixed area [(Huggard, 2018)](https://www.abmi.ca/home/publications/501-550/516).  
+
 Here we compare the ABMI's CRT-derived moose density estimates to those 
 estimated by the Government of Alberta using distance sampling (i.e., aerial 
 surveys conducted since 2014). We used the WMU as the sample unit, allowing us 
 to compare the density estimate directly over the years 2014-2018. The ABMI 
-estimates were calculated using all RC data from the years 2015-2017, whereas 
+estimates were calculated using RC data from the years 2015-2017, whereas 
 aerial survey density estimates were calculated from a singe year sample within 
-the the five year time period. There were fourteen WMUs in the OSR that we were 
-able to obtain moose density estimates from both sources. Table 1 below displays
-the results, and the corresponding confidence intervals in estimates. 
+the the five year time period. There were fourteen WMUs that we were able to 
+obtain moose density estimates from both sources. Table 1 below displays the 
+results, and the corresponding confidence intervals in estimates. 
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
 
@@ -544,9 +561,9 @@ cameras placed in each WMU (Deployments in the above table), such that confidenc
 increases when more cameras are available in a sampling unit. Most of the WMUs
 in the OSR have less than 100 ABMI deployments, and therefore would be expected to 
 have moose density confidence limits that are as wide as the mean (i.e., +/- 50%
-of the mean if they were symmetrical) after one complete monitoring rotation 
-(Huggard, 2019). This means that only large changes in moose population would be
-detected with statistical confidence at the WMU-scale.
+of the mean if they were symmetrical) after one complete monitoring rotation. 
+This means that only large changes in moose population would be detected with 
+statistical confidence at the WMU-scale.
 
 However, when mean density is estimated for the entire OSR using all ABMI RC 
 deployments across the region, confidence intervals are narrowed. Estimated 
@@ -559,7 +576,7 @@ means more sampling in the winter, which generally leads to less detections and
 lower density estimates (Huggard, 2019). The intent is to develop a seasonal 
 correction procedure once the 2018 ABMI RC data is processed. 
 
-```{r}
+```{r }
 
 osr_dens <- data.frame(
   "Year" = c(2015, 2016, 2017),
@@ -575,26 +592,44 @@ osr_dens <- osr_dens %>%
 datatable(data = osr_dens, rownames = FALSE,
           caption = "Table 2. Density Estimates for Entire OSR By Year, Using 
           ABMI Remote Camera Data",
-          class = 'cell-border-stripe')
+          class = 'cell-border-stripe',
+          width = 600,
+          options = list(columnDefs = list(list(className = 'dt-right',
+                                                targets = 3)),
+                         dom = 't'))
 
 ```
 
-According to Huggard (2019), moose density estimates from ABMI's RCs are likely 
-to be biased upwards. The first reason for this is a practical element of using RCs: 
-cameras are usually placed in small openings so that they are not obscured by 
-vegetation. However, moose tend to use these areas preferentially for foraging 
-(at least in the summer), leading to overestimates of density. The second reason
-is that moose are also attracted to the cameras (lure or no lure). In order to 
-get accurate absolute density estimates from RCs, a calibration procedure using
-other methods (such as aerial surveys) will likely be required. However, RC data
-can still be useful as relative abundance estimates, and be used for habitat 
-modeling (see Section 4.2 on Distribution) and for long-term trend analysis.
+Moose density estimates from ABMI's RCs are likely to be biased upwards. The 
+first reason for this is a practical element of using RCs: cameras are usually 
+placed in small openings so that they are not obscured by vegetation. However, 
+moose tend to use these areas preferentially for foraging (at least in the 
+summer), leading to overestimates of density. The second reason is that moose 
+are also attracted to the cameras. In order to get accurate absolute density 
+estimates from RCs, a calibration procedure using other methods (such as aerial 
+surveys) will likely be required. However, this RC data can still be useful as 
+relative abundance estimates, and be used for habitat modeling (see Section 4.2 
+on Distribution) and for long-term trend analysis.
 
 ##### Other Remote Camera Monitoring Programs in Alberta
+
+*To add:*
 
 + This section will include work from a variety of research programs and 
 published literature in the area (e.g. findings from the Boreal Deer Project, 
 Fisher & Burton, 2018).
+
+##### Other Literature
+
+Schneider et al. 2000 examined broad scale changes to moose density across 
+Northern Alberta using random stratified block aerial surveys. Moose median 
+densities increased from 0.25 per km$^2$ in the green zone to 0.4 per km$^2$ in 
+the white zone. Moose density was also found to be higher in the foothills and 
+mixedwood regions.
+
+*To add:*
+
++ Description of other published sources of density estimates. 
 
 ### Lambda
 
@@ -605,10 +640,10 @@ reference. In Rochester, Alberta, which was the study area, the geometric rate
 of increase in moose was 1.24 and 1.03 in 1965 and 1979, respectively. 
 
 We calculated lambda for 9 WMUs from 13 Government of Alberta reports between 
-1993 and 2018 (Table 2). Across all WMUs and years, mean lambda was 1.03. As 
+1993 and 2018 (Table 3). Across all WMUs and years, mean lambda was 1.03. As 
 should be expected given the stability of moose density in Northeastern Alberta,
 lambda is near one for all WMUs with reported metrics of density across multiple
-years (Table) but varies by WMU, with growth rates generally decreasing with
+years but varies by WMU, with growth rates generally decreasing with
 latitude (Figure 7). 
 
 ```{r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE}
@@ -648,6 +683,8 @@ datatable(data = df_lamb2,
           colnames = c("WMU", "Lambda",
                        "Number of Surveys"),
           rownames = FALSE,
+          caption = "Table 3. Calculations of Lambda in 14 WMUs of the OSR. Includes
+          WMUs which have been surveyed at least twice between 1993-2018.",
           width = 500,
           options = list(
             columnDefs = list(list(className = 'dt-left', targets = 1)),
@@ -656,7 +693,7 @@ datatable(data = df_lamb2,
 
 ```
 
-``` {r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, fig.cap="Figure 7. Moose lambda in WMUs across the OSR. Includes WMUs which have been surveyed at least twice between 1993-2018."}
+``` {r include=TRUE, echo=TRUE, message=FALSE, warning=FALSE, eval=TRUE, fig.cap="Figure 7. Moose lambda in WMUs across the OSR."}
 
 # Join lambda information to WMU polygons
 ab_wmu_lamb <- ab_wmu %>%
@@ -823,7 +860,11 @@ include_graphics("./png_files/demo.png")
 We extracted either adult or calf survival values from three reviewed documents
 (9% of the total) for a combined 10 survival estimates. Calf survival was lower
 than adult survival and was higher when estimated with GPS telemetry vs. radio
-telemetry. 
+telemetry.
+
+*To add:*
+
++ More detail regarding findings of moose survival.
 
 ***
 
@@ -831,7 +872,13 @@ telemetry.
 
 The following section details research related to the distribution, occupancy, 
 and relative abundance of moose in the OSR as a function of various 
-anthropogenic and natural features. 
+anthropogenic and natural features.
+
+*To add:*
+
++ The intent is to add a section where impact coefficients (size, magnitude) can
+be compared across methods. In this section a correlation matrix of available 
+data / studies will be developed to faciliate this comparison. 
 
 ### Habitat Associations
 
@@ -881,6 +928,13 @@ preference for shrub and grassland areas, as well as marshes. In addition, moose
 prefer older deciduous forest, but younger mixedwood areas. In the winter, an
 opposite preference for mixedwood is found.
 
+Other studies have also investigated how moose respond to various features in 
+the OSR landscape. 
+
+*To add:*
+
++ Narrative description of other studies (e.g. Toews et al 2017).
+
 ### Predictions of Relative Abundance
 
 The ABMI uses these habitat association models, plus models describing how 
@@ -890,6 +944,8 @@ Current condition predictions are made based on the vegetation and human
 footprint currently present in each 1 km$^2$ unit, whereas reference condition
 predictions are made after human footprint has been erased and the native 
 vegetation 'backfilled' in the unit based on the surrounding area.
+
+*To add:*
 
 + Further writing will describe the usefulness of these predictions for trend
 analysis.
@@ -972,33 +1028,19 @@ map_2
 
 ```
 
-### Other Literature
-
-Two other reviewed documents estimated moose density as a function of 
-environmental variables. The first (Schneider et al. 2000) examined broad scale 
-changes to moose density across Northern Alberta using random stratified block 
-aerial surveys. Moose median densities increased from 0.25 per km$^2$ in the 
-green zone, which is characterized by forestry as the dominant land use, to 0.4 
-per km$^2$ in the white zone, which is primarily agriculture and human 
-settlement. Moose density was also found to be higher in the foothills and 
-mixedwood regions. Schneider et al. (2000) also measured changes in moose 
-density along gradients of human activity and found that density was higher 
-closer to the white zone and with decreasing latitude. Ferguson and Keith (1982)
-found that, within 500 m of either high or low use cross country ski trails in 
-Elk Island National Park, moose density increased or decreased respectively, 
-compared to farther than 500 m. 
-
 ### Behaviour
 
-+ Review documents related to moose behaviour and effect of human activity
+*To add:*
+
++ Review documents related to the effect of human activity on moose behaviour
 (mostly with studies using telemetry data). 
 
 ### Selection
 
+*To add:*
+
 + Review literature on moose selection of various features relative to their
 availability.
-
-### Home Range Area
 
 # Discussion
 
@@ -1015,8 +1057,6 @@ function of time, space or human disturbance; however, certain studies have
 reported that moose abundance is negatively impacted by anthropogenic 
 disturbance in the OSR region (Fisher and Burton, 2018).
 
-+ Discussion section under ongoing development.
-
 # Literature Cited
 
 Boutin, S., H. Bohm, E. Neilson, A. Droghini, & C. de la Mare. (2015). Wildlife Habitat Effectiveness and Connectivity Research Program, Final Report.
@@ -1029,7 +1069,11 @@ Schneider, R. R., S. Wasel, & A. Press. (2000). The Effect of Human Settlement o
 
 Steenweg, R., Hebblewhite, M., Kays, R., Ahumada, J., Fisher, J. T., Burton, C., ... & Brodie, J. (2017). Scaling‐up camera traps: Monitoring the planet's biodiversity with networks of remote sensors. Frontiers in Ecology and the Environment, 15(1), 26-34.
 
-+ To add: Document from D. Huggard (2018)
+Toews, M., Juanes, F., & Burton, A. C. (2017). Mammal responses to human footprint vary with spatial extent but not with spatial grain. Ecosphere, 8(3).
+
+Wasser, S. K., Keim, J. L., Taper, M. L., & Lele, S. R. (2011). The influences of wolf predation, habitat loss, and human activity on caribou and moose in the Alberta oil sands. Frontiers in Ecology and the Environment, 9(10), 546-551.
+
+
 
 
 
