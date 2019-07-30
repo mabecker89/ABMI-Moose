@@ -6,7 +6,7 @@
 
 This repository holds data, scripts, and reports associated with Moose work for the OSM synthesis project.
 
-**An updated version (April 30, 2019) of the moose report is available:**
+**An updated version (July 30, 2019) of the moose report is available:**
 
 [*Knowledge Assessment of Moose (Alces alces) in Alberta's Oil Sands Region*](https://mabecker89.github.io/OSM-Synthesis-Moose/OSMMooseReview_v3)
 
@@ -18,6 +18,8 @@ The following interactive maps of various moose population parameters, data, and
 > *Latitude/Longitude locations of moose sightings during aerial surveys from 2013-2018*
 + [ABMI relative abundance predictions (1km<sup>2</sup> grid)](https://mabecker89.github.io/OSM-Synthesis-Moose/relabund)
 > *Based on ABMI habitat association modeling*
+
+A description of the methods used to compare aerial survey and camera trap moose density estimates is available [here](https://mabecker89.github.io/OSM-Synthesis-Moose/aerial-camera-comp_2) 
 
 
 
