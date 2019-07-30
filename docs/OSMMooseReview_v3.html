@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Marcus Becker, Eric Nielson, Erin Bayne" />
+
+
+<title>Knowledge Assessment of Moose (Alces alces) in Alberta’s Oil Sands Region</title>
+
+<script src="OSMMooseReview_v3_files/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="OSMMooseReview_v3_files/bootstrap-3.3.5/css/readable.min.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="OSMMooseReview_v3_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="OSMMooseReview_v3_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="OSMMooseReview_v3_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="OSMMooseReview_v3_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="OSMMooseReview_v3_files/navigation-1.1/tabsets.js"></script>
+<script src="OSMMooseReview_v3_files/navigation-1.1/codefolding.js"></script>
+<script src="OSMMooseReview_v3_files/htmlwidgets-1.3/htmlwidgets.js"></script>
+<script src="OSMMooseReview_v3_files/plotly-binding-4.9.0/plotly.js"></script>
+<script src="OSMMooseReview_v3_files/typedarray-0.1/typedarray.min.js"></script>
+<link href="OSMMooseReview_v3_files/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<link href="OSMMooseReview_v3_files/plotly-htmlwidgets-css-1.46.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/plotly-main-1.46.1/plotly-latest.min.js"></script>
+<link href="OSMMooseReview_v3_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/datatables-binding-0.7/datatables.js"></script>
+<link href="OSMMooseReview_v3_files/dt-core-1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="OSMMooseReview_v3_files/dt-core-1.10.16/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/dt-core-1.10.16/js/jquery.dataTables.min.js"></script>
+<link href="OSMMooseReview_v3_files/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/nouislider-7.0.10/jquery.nouislider.min.js"></script>
+<link href="OSMMooseReview_v3_files/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet" />
+<script src="OSMMooseReview_v3_files/selectize-0.12.0/selectize.min.js"></script>
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Knowledge Assessment of Moose (Alces alces) in Alberta’s Oil Sands Region</h1>
+<h4 class="author">Marcus Becker, Eric Nielson, Erin Bayne</h4>
+
+</div>
+
+
+<style>
+    body .main-container {
+        max-width: 1350px;
+    }
+</style>
+<div id="executive-summary" class="section level1">
+<h1>Executive Summary</h1>
+<p>We reviewed technical reports and peer-reviewed articles to assess the state of knowledge of moose in Alberta’s Oil Sands Region (OSR). Our intention was to elucidate what is known concerning moose in the region, and in particular, what the effect of oil and gas extraction has been on moose behaviour, distribution, and population. As this energy-related footprint has grown substantially over the last few decades, it is critical to deepen understanding of species’ potential stressor-response relationships through synthesis of currently available data and information.</p>
+<p>Moose response to oil and gas footprint stressors can present in different ways, including the behaviour of individuals, their distribution across a landscape, or through changes in population parameters. We describe and compare the findings of research and monitoring efforts at each of these levels for moose in the OSR, including the extraction of relevant estimates of moose population state variables (e.g., density, demographics) and reported coefficients of habitat association. We compare the degree of agreement in magnitude and direction between effect sizes reported from different studies and methods, and comment on reasons for (dis)similiarity. From there, we outline how results from various monitoring methods can be synthesized to provide a holistic assessment of moose response to oil and gas development, and how future monitoring efforts can proceed in an efficient manner to address policy-relevant questions.</p>
+<p>Based on data from Government of Alberta aerial ungulate surveys, overall moose population density in the OSR (measured at the Wildlife Management Unit scale) has remained relatively stable over time. As new population monitoring methods are introduced to the region, such as remote camera traps, work should be undertaken to harmonize estimates from different sources so that population data can be generated seamlessly over time. We describe first steps taken to calibrate moose density estimates between aerial surveys and camera traps. Behaviourally, moose displayed sensitivity to human disturbance, generally exhibiting low use and avoidance of human features at a local and landscape scale. This effect was found for a variety of features, including cutlines, well sites, trails, and pipelines; however, disentangling the exact contribution of oilsands-specific development remains a subject of ongoing research effort.</p>
+<hr />
+</div>
+<div id="study-area" class="section level1">
+<h1>Study Area</h1>
+<p>The Alberta Oil Sands Region is an area totalling 140,000 km<span class="math inline">\(^2\)</span> that contains a high proportion of the province’s energy resource extraction activities. The OSR is located in the boreal forest natural region, and is home to a variety of boreal mammal species including moose. A total of 37 provincially-managed Wildlife Management Units (WMUs) intersect this region geographically (Figure 1).</p>
+<div class="figure" style="text-align: center">
+<img src="png_files/aoi_detailed.png" alt="Figure 1. The Oil Sands Region of Alberta, with boundary outlined in red. Intersecting WMUs are represented by grey polygons." width="70%" />
+<p class="caption">
+Figure 1. The Oil Sands Region of Alberta, with boundary outlined in red. Intersecting WMUs are represented by grey polygons.
+</p>
+</div>
+<p><br></p>
+<div id="trends-in-human-footprint-in-the-osr" class="section level2">
+<h2>Trends in Human Footprint in the OSR</h2>
+<p>The extent of human land use in any given area is collectively defined as human footprint (HF), and the measurement of HF over time can be used to monitor the status of landscapes and help explain trends in biotic variables.</p>
+<p>As of 2016, HF occupied 15.5% of the landbase of the OSR (approximately 22,000 km<span class="math inline">\(^2\)</span>). The three leading HF categories in the region are agriculture (7.7%), forestry (3.8%), and energy (2.5%). Energy related footprint includes:</p>
+<blockquote>
+<p>Areas where vegetation or soil has been disturbed by the creation of mine sites, peat mines, pipelines, seismic lines, transmission lines, and well sites (ABMI, 2016).</p>
+</blockquote>
+<p>In 1999 this category of footprint comprised 1.6% of the landscape (2,131 km<span class="math inline">\(^2\)</span>). Since then, energy footprint has grown 51% in the region to a total of 3,211 km<span class="math inline">\(^2\)</span> in 2016, or 2.5% of the landscape. While these values indicate a physical demarcation for energy activity, ecological impact can often extend beyond these boundaries.</p>
+<hr />
+</div>
+</div>
+<div id="monitoring-methods-and-data-sources" class="section level1">
+<h1>Monitoring Methods and Data Sources</h1>
+<p>In Alberta, <strong>aerial surveys</strong> have been heavily relied upon to generate estimates of ungulate population parameters, including moose, at the WMU scale. Prior to 2014, a stratified random block approach was most commonly used; however, the provincial government has since adopted distance sampling as the preferred method. Distance sampling includes an estimate of detectability, which helps to correct for sightability biases inherent to previous methods (Peters et al. 2014). This technique accounts for variation in detectability by assuming that animals close to the observer are more easily detected than when the animal is farther away (Buckland et al. 1993). A recent review found that distance sampling, with the sightability correction, likely provides more accurate estimates of parameters such as density and with greater efficiency, i.e. fewer flight hours (Peters et al 2014). In this review we report results from both eras (1993-2013 using random block, and 2014-present using distance sampling) but urge caution in direct comparison between estimates using different methods. Without a detection adjustment, random block surveys are more likely to have underestimated moose populations. When sample size is high enough, aerial surveys can report estimates of population size and density, as well as gender and cow-calf ratios at the WMU scale.</p>
+<p>The use of <strong>remote cameras</strong> to monitor animal populations has grown substantially in recent years as technological progress has increased camera reliability and cost effectiveness (Steenweg et al., 2016). In northern Alberta, cameras are regularly used to monitor mammal populations as they can be relatively easy and cost-effective to deploy and allow for spatially explicit analysis of animal densities and occupancy across the landscape. Analysis of camera images can also provide more detailed information such as sex and age ratios, body condition, and behaviour as well as community level metrics such as species richness and phenology. In addition, data from cameras can provide increased spatial resolution in the estimation of density when compared to aerial surveys, including support for more detailed habitat modeling and predicted relative abundance across a heterogeneous landscape. However, the widespread use of remote cameras in Alberta for ecological purposes is still in a nascent phase, and questions remain about the precision, accuracy, and sampling effort required for camera data analysis. In the OSR, several studies and monitoring programs have used cameras to track mammal populations and their response to anthropogenic features. The Alberta Biodiversity Monitoring Institute (ABMI) began a province-wide remote camera monitoring program in 2014, and several private companies who operate in the OSR landscape use cameras to monitor animal populations in their areas of interest. Remote cameras have also been used in the OSR for both academic research purposes (e.g. Fisher &amp; Burton, 2018; Dunne &amp; Quinn, 2009) as well as to study the effects of various conservation tools and policies (Boutin et al., 2015).</p>
+<p>Mammal populations are also monitored using <strong>snow-track</strong> information. Prior to 2014, the ABMI reported on mammal populations in the province, including moose, using winter snow-track surveys conducted along 10-km transects. Several studies have used this dataset to investigate mammalian response to various human footprint types in the OSR, including energy-related footprint (e.g. Toews et al., 2017; Toews et al., 2018). Because of the inherent limitations (requirement for suitable snow conditions, exclusion of hibernating species, high potential for observer error, etc), the winter snowtracking monitoring method has been less used in recent years (Burton 2014).</p>
+<p>Another non-invasive monitoring technique used to track mammals is the collection of <strong>scat samples</strong>. In addition to providing spatially-explicit presence information, an advantage of this approach is that scat can also be used to glean information regarding animal health and potential exposure to toxins (Wasser et al., 2011; Lundin et al., 2015).</p>
+<p><strong>Radio and GPS telemetry</strong> are also used to track and measure mammalian response to landscape features in the OSR. In the former, a transmitter attached to the study animal broadcasts pulsed signals in the Very High Frequency (VHF) portion of the electromagnetic spectrum, whereas the latter approach uses global positioning satellites to delineate animal location from the transmitter. These applications can provide detailed information on moose movement, home range area, and relative use of various available habitats (Osko et al., 2004). Telemetry is also useful to test hypotheses regarding whether animals select or avoid various human disturbance features (e.g. Boutin et al., 2015; Neilson &amp; Boutin 2017).</p>
+<p>Finally, recent efforts have been made to incorporate hunter observations as data for tracking trends in moose populations. Peters et al (2018) recently reviewed the Alberta Moose Hunter Survey App and concluded that the technology has potential as a cost-effective method to provide supplemental population and demographic information to more traditional monitoring methods. While this data is still in its infancy, and not considered in this report, it will be worthwhile checking back in to reassess progress and whether hunter participation has increased over time.</p>
+<hr />
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<div id="moose-population-parameters" class="section level2">
+<h2>Moose Population Parameters</h2>
+<div id="density" class="section level3">
+<h3>Density</h3>
+<div id="estimates-from-aerial-surveys" class="section level4">
+<h4>Estimates from Aerial Surveys</h4>
+<p>The Government of Alberta uses aerial surveys to obtain density estimates that inform ungulate management. Among WMUs surveyed pre-2014, the mean density was 0.18 individuals per km<span class="math inline">\(^2\)</span>. After that period, when distance sampling was adopted, the mean density of moose among WMUs sampled between 2014-2019 has been 0.18 individuals per km<span class="math inline">\(^2\)</span>.</p>
+<p>Figure 2 below displays estimated moose density over time, split by WMU. The user can hover over each point to view the underlying information regarding survey year, estimated moose density, and WMU, as well as use the legend on the right of the plot to remove or add-in data from a particular WMU. By double-clicking on a single WMU in the legend the user can isolate data from that unit.</p>
+<p>The black points reflect the overall average density across WMU’s sampled in a particular year, with the error bars reflecting one standard error.</p>
+<div class="figure" style="text-align: center">
+<div id="htmlwidget-a1231bcc1a28f5338d75" style="width:850px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a1231bcc1a28f5338d75">{"x":{"data":[{"x":[2019],"y":[0.112],"text":"WMU: 256<br />Survey_Year: 2019<br />Density: 0.112","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(248,118,109,0.6)","dash":"solid"},"hoveron":"points","name":"256","legendgroup":"256","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"frame":null},{"x":[2016],"y":[0.165],"text":"WMU: 258<br />Survey_Year: 2016<br />Density: 0.165","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(239,127,72,0.6)","dash":"solid"},"hoveron":"points","name":"258","legendgroup":"258","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(239,127,72,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(239,127,72,1)"}},"frame":null},{"x":[2016],"y":[0.16],"text":"WMU: 260<br />Survey_Year: 2016<br />Density: 0.160","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(228,136,0,0.6)","dash":"solid"},"hoveron":"points","name":"260","legendgroup":"260","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(228,136,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(228,136,0,1)"}},"frame":null},{"x":[2001,2007,2016],"y":[0.16,0.31,0.32],"text":["WMU: 500<br />Survey_Year: 2001<br />Density: 0.160","WMU: 500<br />Survey_Year: 2007<br />Density: 0.310","WMU: 500<br />Survey_Year: 2016<br />Density: 0.320"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(214,145,0,0.6)","dash":"solid"},"hoveron":"points","name":"500","legendgroup":"500","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2019],"y":[0.229],"text":"WMU: 501<br />Survey_Year: 2019<br />Density: 0.229","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(198,153,0,0.6)","dash":"solid"},"hoveron":"points","name":"501","legendgroup":"501","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(198,153,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(198,153,0,1)"}},"frame":null},{"x":[2017],"y":[0.27],"text":"WMU: 502<br />Survey_Year: 2017<br />Density: 0.270","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(180,160,0,0.6)","dash":"solid"},"hoveron":"points","name":"502","legendgroup":"502","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(180,160,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(180,160,0,1)"}},"frame":null},{"x":[1995,2015],"y":[0.16,0.3],"text":["WMU: 503<br />Survey_Year: 1995<br />Density: 0.160","WMU: 503<br />Survey_Year: 2015<br />Density: 0.300"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(158,167,0,0.6)","dash":"solid"},"hoveron":"points","name":"503","legendgroup":"503","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2001,2007,2015],"y":[0.25,0.54,0.5],"text":["WMU: 504<br />Survey_Year: 2001<br />Density: 0.250","WMU: 504<br />Survey_Year: 2007<br />Density: 0.540","WMU: 504<br />Survey_Year: 2015<br />Density: 0.500"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(131,173,0,0.6)","dash":"solid"},"hoveron":"points","name":"504","legendgroup":"504","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2016],"y":[0.37],"text":"WMU: 509<br />Survey_Year: 2016<br />Density: 0.370","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(96,178,0,0.6)","dash":"solid"},"hoveron":"points","name":"509","legendgroup":"509","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(96,178,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(96,178,0,1)"}},"frame":null},{"x":[1994,1999,2003,2014],"y":[0.23,0.33,0.35,0.038],"text":["WMU: 511<br />Survey_Year: 1994<br />Density: 0.230","WMU: 511<br />Survey_Year: 1999<br />Density: 0.330","WMU: 511<br />Survey_Year: 2003<br />Density: 0.350","WMU: 511<br />Survey_Year: 2014<br />Density: 0.038"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(25,183,0,0.6)","dash":"solid"},"hoveron":"points","name":"511","legendgroup":"511","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1999,2005,2013],"y":[0.19,0.19,0.3],"text":["WMU: 512<br />Survey_Year: 1999<br />Density: 0.190","WMU: 512<br />Survey_Year: 2005<br />Density: 0.190","WMU: 512<br />Survey_Year: 2013<br />Density: 0.300"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,187,72,0.6)","dash":"solid"},"hoveron":"points","name":"512","legendgroup":"512","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2017],"y":[0.213],"text":"WMU: 514<br />Survey_Year: 2017<br />Density: 0.213","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(0,190,107,0.6)","dash":"solid"},"hoveron":"points","name":"514","legendgroup":"514","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,190,107,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,190,107,1)"}},"frame":null},{"x":[1999,2004,2014,2019],"y":[0.37,0.24,0.14,0.214],"text":["WMU: 515<br />Survey_Year: 1999<br />Density: 0.370","WMU: 515<br />Survey_Year: 2004<br />Density: 0.240","WMU: 515<br />Survey_Year: 2014<br />Density: 0.140","WMU: 515<br />Survey_Year: 2019<br />Density: 0.214"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,192,136,0.6)","dash":"solid"},"hoveron":"points","name":"515","legendgroup":"515","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2018],"y":[0.079],"text":"WMU: 516<br />Survey_Year: 2018<br />Density: 0.079","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(0,193,162,0.6)","dash":"solid"},"hoveron":"points","name":"516","legendgroup":"516","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,193,162,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,193,162,1)"}},"frame":null},{"x":[1993,2000,2006,2011,2013,2019],"y":[0.12,0.08,0.05,0.07,0.06,0.085],"text":["WMU: 517<br />Survey_Year: 1993<br />Density: 0.120","WMU: 517<br />Survey_Year: 2000<br />Density: 0.080","WMU: 517<br />Survey_Year: 2006<br />Density: 0.050","WMU: 517<br />Survey_Year: 2011<br />Density: 0.070","WMU: 517<br />Survey_Year: 2013<br />Density: 0.060","WMU: 517<br />Survey_Year: 2019<br />Density: 0.085"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,192,186,0.6)","dash":"solid"},"hoveron":"points","name":"517","legendgroup":"517","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1993,1999,2011,2013],"y":[0.1,0.13,0.08,0.07],"text":["WMU: 518<br />Survey_Year: 1993<br />Density: 0.100","WMU: 518<br />Survey_Year: 1999<br />Density: 0.130","WMU: 518<br />Survey_Year: 2011<br />Density: 0.080","WMU: 518<br />Survey_Year: 2013<br />Density: 0.070"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,190,207,0.6)","dash":"solid"},"hoveron":"points","name":"518","legendgroup":"518","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1993,1997,2003,2010,2015],"y":[0.11,0.19,0.15,0.15,0.044],"text":["WMU: 519<br />Survey_Year: 1993<br />Density: 0.110","WMU: 519<br />Survey_Year: 1997<br />Density: 0.190","WMU: 519<br />Survey_Year: 2003<br />Density: 0.150","WMU: 519<br />Survey_Year: 2010<br />Density: 0.150","WMU: 519<br />Survey_Year: 2015<br />Density: 0.044"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(0,185,225,0.6)","dash":"solid"},"hoveron":"points","name":"519","legendgroup":"519","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2018],"y":[0.16],"text":"WMU: 520<br />Survey_Year: 2018<br />Density: 0.160","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(0,179,241,0.6)","dash":"solid"},"hoveron":"points","name":"520","legendgroup":"520","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,179,241,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,179,241,1)"}},"frame":null},{"x":[2018],"y":[0.42],"text":"WMU: 523<br />Survey_Year: 2018<br />Density: 0.420","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(0,171,253,0.6)","dash":"solid"},"hoveron":"points","name":"523","legendgroup":"523","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(0,171,253,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,171,253,1)"}},"frame":null},{"x":[2016],"y":[0.477],"text":"WMU: 526<br />Survey_Year: 2016<br />Density: 0.477","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(70,160,255,0.6)","dash":"solid"},"hoveron":"points","name":"526","legendgroup":"526","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(70,160,255,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(70,160,255,1)"}},"frame":null},{"x":[2000,2009,2015],"y":[0.3,0.59,0.284],"text":["WMU: 527<br />Survey_Year: 2000<br />Density: 0.300","WMU: 527<br />Survey_Year: 2009<br />Density: 0.590","WMU: 527<br />Survey_Year: 2015<br />Density: 0.284"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(135,148,255,0.6)","dash":"solid"},"hoveron":"points","name":"527","legendgroup":"527","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2000,2013,2019],"y":[0.4,0.19,0.104],"text":["WMU: 528<br />Survey_Year: 2000<br />Density: 0.400","WMU: 528<br />Survey_Year: 2013<br />Density: 0.190","WMU: 528<br />Survey_Year: 2019<br />Density: 0.104"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(176,134,255,0.6)","dash":"solid"},"hoveron":"points","name":"528","legendgroup":"528","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1993,1998,2006,2009,2017],"y":[0.11,0.15,0.06,0.04,0.089],"text":["WMU: 529<br />Survey_Year: 1993<br />Density: 0.110","WMU: 529<br />Survey_Year: 1998<br />Density: 0.150","WMU: 529<br />Survey_Year: 2006<br />Density: 0.060","WMU: 529<br />Survey_Year: 2009<br />Density: 0.040","WMU: 529<br />Survey_Year: 2017<br />Density: 0.089"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(206,121,255,0.6)","dash":"solid"},"hoveron":"points","name":"529","legendgroup":"529","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1994,2010,2018],"y":[0.12,0.11,0.12],"text":["WMU: 530<br />Survey_Year: 1994<br />Density: 0.120","WMU: 530<br />Survey_Year: 2010<br />Density: 0.110","WMU: 530<br />Survey_Year: 2018<br />Density: 0.120"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(228,109,246,0.6)","dash":"solid"},"hoveron":"points","name":"530","legendgroup":"530","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1994,2001,2009,2015,2016],"y":[0.1,0.1,0.04,0.07,0.07],"text":["WMU: 531<br />Survey_Year: 1994<br />Density: 0.100","WMU: 531<br />Survey_Year: 2001<br />Density: 0.100","WMU: 531<br />Survey_Year: 2009<br />Density: 0.040","WMU: 531<br />Survey_Year: 2015<br />Density: 0.070","WMU: 531<br />Survey_Year: 2016<br />Density: 0.070"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(243,101,230,0.6)","dash":"solid"},"hoveron":"points","name":"531","legendgroup":"531","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2013],"y":[0.07],"text":"WMU: 541<br />Survey_Year: 2013<br />Density: 0.070","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(252,97,212,0.6)","dash":"solid"},"hoveron":"points","name":"541","legendgroup":"541","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(252,97,212,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(252,97,212,1)"}},"frame":null},{"x":[1994,2000,2007,2016],"y":[0.13,0.11,0.11,0.07],"text":["WMU: 542<br />Survey_Year: 1994<br />Density: 0.130","WMU: 542<br />Survey_Year: 2000<br />Density: 0.110","WMU: 542<br />Survey_Year: 2007<br />Density: 0.110","WMU: 542<br />Survey_Year: 2016<br />Density: 0.070"],"type":"scatter","mode":"lines","line":{"width":1.88976377952756,"color":"rgba(255,98,190,0.6)","dash":"solid"},"hoveron":"points","name":"542","legendgroup":"542","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2018],"y":[0.12],"text":"WMU: 544<br />Survey_Year: 2018<br />Density: 0.120","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(255,103,166,0.6)","dash":"solid"},"hoveron":"points","name":"544","legendgroup":"544","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(255,103,166,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,103,166,1)"}},"frame":null},{"x":[2014],"y":[0.051],"text":"WMU: 726<br />Survey_Year: 2014<br />Density: 0.051","type":"scatter","mode":"lines+markers","line":{"width":1.88976377952756,"color":"rgba(254,110,139,0.6)","dash":"solid"},"hoveron":"points","name":"726","legendgroup":"726","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","marker":{"autocolorscale":false,"color":"rgba(254,110,139,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(254,110,139,1)"}},"frame":null},{"x":[2016,2007,2001],"y":[0.32,0.31,0.16],"text":["WMU: 500<br />Survey_Year: 2016<br />Density: 0.320","WMU: 500<br />Survey_Year: 2007<br />Density: 0.310","WMU: 500<br />Survey_Year: 2001<br />Density: 0.160"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(214,145,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(214,145,0,1)"}},"hoveron":"points","name":"500","legendgroup":"500","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2015,1995],"y":[0.3,0.16],"text":["WMU: 503<br />Survey_Year: 2015<br />Density: 0.300","WMU: 503<br />Survey_Year: 1995<br />Density: 0.160"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(158,167,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(158,167,0,1)"}},"hoveron":"points","name":"503","legendgroup":"503","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2007,2001,2015],"y":[0.54,0.25,0.5],"text":["WMU: 504<br />Survey_Year: 2007<br />Density: 0.540","WMU: 504<br />Survey_Year: 2001<br />Density: 0.250","WMU: 504<br />Survey_Year: 2015<br />Density: 0.500"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(131,173,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(131,173,0,1)"}},"hoveron":"points","name":"504","legendgroup":"504","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2014,2003,1999,1994],"y":[0.038,0.35,0.33,0.23],"text":["WMU: 511<br />Survey_Year: 2014<br />Density: 0.038","WMU: 511<br />Survey_Year: 2003<br />Density: 0.350","WMU: 511<br />Survey_Year: 1999<br />Density: 0.330","WMU: 511<br />Survey_Year: 1994<br />Density: 0.230"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(25,183,0,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(25,183,0,1)"}},"hoveron":"points","name":"511","legendgroup":"511","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2013,2005,1999],"y":[0.3,0.19,0.19],"text":["WMU: 512<br />Survey_Year: 2013<br />Density: 0.300","WMU: 512<br />Survey_Year: 2005<br />Density: 0.190","WMU: 512<br />Survey_Year: 1999<br />Density: 0.190"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,187,72,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,187,72,1)"}},"hoveron":"points","name":"512","legendgroup":"512","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2014,2004,1999,2019],"y":[0.14,0.24,0.37,0.214],"text":["WMU: 515<br />Survey_Year: 2014<br />Density: 0.140","WMU: 515<br />Survey_Year: 2004<br />Density: 0.240","WMU: 515<br />Survey_Year: 1999<br />Density: 0.370","WMU: 515<br />Survey_Year: 2019<br />Density: 0.214"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,192,136,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,192,136,1)"}},"hoveron":"points","name":"515","legendgroup":"515","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2013,2006,2000,1993,2011,2019],"y":[0.06,0.05,0.08,0.12,0.07,0.085],"text":["WMU: 517<br />Survey_Year: 2013<br />Density: 0.060","WMU: 517<br />Survey_Year: 2006<br />Density: 0.050","WMU: 517<br />Survey_Year: 2000<br />Density: 0.080","WMU: 517<br />Survey_Year: 1993<br />Density: 0.120","WMU: 517<br />Survey_Year: 2011<br />Density: 0.070","WMU: 517<br />Survey_Year: 2019<br />Density: 0.085"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,192,186,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,192,186,1)"}},"hoveron":"points","name":"517","legendgroup":"517","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2013,2011,1999,1993],"y":[0.07,0.08,0.13,0.1],"text":["WMU: 518<br />Survey_Year: 2013<br />Density: 0.070","WMU: 518<br />Survey_Year: 2011<br />Density: 0.080","WMU: 518<br />Survey_Year: 1999<br />Density: 0.130","WMU: 518<br />Survey_Year: 1993<br />Density: 0.100"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,190,207,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,190,207,1)"}},"hoveron":"points","name":"518","legendgroup":"518","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2010,2015,2003,1997,1993],"y":[0.15,0.044,0.15,0.19,0.11],"text":["WMU: 519<br />Survey_Year: 2010<br />Density: 0.150","WMU: 519<br />Survey_Year: 2015<br />Density: 0.044","WMU: 519<br />Survey_Year: 2003<br />Density: 0.150","WMU: 519<br />Survey_Year: 1997<br />Density: 0.190","WMU: 519<br />Survey_Year: 1993<br />Density: 0.110"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,185,225,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,185,225,1)"}},"hoveron":"points","name":"519","legendgroup":"519","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2015,2009,2000],"y":[0.284,0.59,0.3],"text":["WMU: 527<br />Survey_Year: 2015<br />Density: 0.284","WMU: 527<br />Survey_Year: 2009<br />Density: 0.590","WMU: 527<br />Survey_Year: 2000<br />Density: 0.300"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(135,148,255,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(135,148,255,1)"}},"hoveron":"points","name":"527","legendgroup":"527","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2013,2000,2019],"y":[0.19,0.4,0.104],"text":["WMU: 528<br />Survey_Year: 2013<br />Density: 0.190","WMU: 528<br />Survey_Year: 2000<br />Density: 0.400","WMU: 528<br />Survey_Year: 2019<br />Density: 0.104"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(176,134,255,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(176,134,255,1)"}},"hoveron":"points","name":"528","legendgroup":"528","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2009,2006,1998,1993,2017],"y":[0.04,0.06,0.15,0.11,0.089],"text":["WMU: 529<br />Survey_Year: 2009<br />Density: 0.040","WMU: 529<br />Survey_Year: 2006<br />Density: 0.060","WMU: 529<br />Survey_Year: 1998<br />Density: 0.150","WMU: 529<br />Survey_Year: 1993<br />Density: 0.110","WMU: 529<br />Survey_Year: 2017<br />Density: 0.089"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(206,121,255,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(206,121,255,1)"}},"hoveron":"points","name":"529","legendgroup":"529","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2010,1994,2018],"y":[0.11,0.12,0.12],"text":["WMU: 530<br />Survey_Year: 2010<br />Density: 0.110","WMU: 530<br />Survey_Year: 1994<br />Density: 0.120","WMU: 530<br />Survey_Year: 2018<br />Density: 0.120"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(228,109,246,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(228,109,246,1)"}},"hoveron":"points","name":"530","legendgroup":"530","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2009,2015,2001,1994,2016],"y":[0.04,0.07,0.1,0.1,0.07],"text":["WMU: 531<br />Survey_Year: 2009<br />Density: 0.040","WMU: 531<br />Survey_Year: 2015<br />Density: 0.070","WMU: 531<br />Survey_Year: 2001<br />Density: 0.100","WMU: 531<br />Survey_Year: 1994<br />Density: 0.100","WMU: 531<br />Survey_Year: 2016<br />Density: 0.070"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(243,101,230,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(243,101,230,1)"}},"hoveron":"points","name":"531","legendgroup":"531","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2007,2016,2000,1994],"y":[0.11,0.07,0.11,0.13],"text":["WMU: 542<br />Survey_Year: 2007<br />Density: 0.110","WMU: 542<br />Survey_Year: 2016<br />Density: 0.070","WMU: 542<br />Survey_Year: 2000<br />Density: 0.110","WMU: 542<br />Survey_Year: 1994<br />Density: 0.130"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,98,190,1)","opacity":0.6,"size":9.4488188976378,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,98,190,1)"}},"hoveron":"points","name":"542","legendgroup":"542","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1993,1994,1995,1997,1998,1999,2000,2001,2003,2004,2005,2006,2007,2009,2010,2011,2013,2014,2015,2016,2017,2018,2019],"y":[0.11,0.145,0.16,0.19,0.15,0.255,0.2225,0.17,0.25,0.24,0.19,0.055,0.32,0.223333333333333,0.13,0.075,0.138,0.0763333333333333,0.2396,0.233142857142857,0.190666666666667,0.1798,0.1488],"text":["Survey_Year: 1993<br />mean_dens: 0.11000000<br />Survey_Year: 1993<br />Density: 0.11000000","Survey_Year: 1994<br />mean_dens: 0.14500000<br />Survey_Year: 1994<br />Density: 0.14500000","Survey_Year: 1995<br />mean_dens: 0.16000000<br />Survey_Year: 1995<br />Density: 0.16000000","Survey_Year: 1997<br />mean_dens: 0.19000000<br />Survey_Year: 1997<br />Density: 0.19000000","Survey_Year: 1998<br />mean_dens: 0.15000000<br />Survey_Year: 1998<br />Density: 0.15000000","Survey_Year: 1999<br />mean_dens: 0.25500000<br />Survey_Year: 1999<br />Density: 0.25500000","Survey_Year: 2000<br />mean_dens: 0.22250000<br />Survey_Year: 2000<br />Density: 0.22250000","Survey_Year: 2001<br />mean_dens: 0.17000000<br />Survey_Year: 2001<br />Density: 0.17000000","Survey_Year: 2003<br />mean_dens: 0.25000000<br />Survey_Year: 2003<br />Density: 0.25000000","Survey_Year: 2004<br />mean_dens: 0.24000000<br />Survey_Year: 2004<br />Density: 0.24000000","Survey_Year: 2005<br />mean_dens: 0.19000000<br />Survey_Year: 2005<br />Density: 0.19000000","Survey_Year: 2006<br />mean_dens: 0.05500000<br />Survey_Year: 2006<br />Density: 0.05500000","Survey_Year: 2007<br />mean_dens: 0.32000000<br />Survey_Year: 2007<br />Density: 0.32000000","Survey_Year: 2009<br />mean_dens: 0.22333333<br />Survey_Year: 2009<br />Density: 0.22333333","Survey_Year: 2010<br />mean_dens: 0.13000000<br />Survey_Year: 2010<br />Density: 0.13000000","Survey_Year: 2011<br />mean_dens: 0.07500000<br />Survey_Year: 2011<br />Density: 0.07500000","Survey_Year: 2013<br />mean_dens: 0.13800000<br />Survey_Year: 2013<br />Density: 0.13800000","Survey_Year: 2014<br />mean_dens: 0.07633333<br />Survey_Year: 2014<br />Density: 0.07633333","Survey_Year: 2015<br />mean_dens: 0.23960000<br />Survey_Year: 2015<br />Density: 0.23960000","Survey_Year: 2016<br />mean_dens: 0.23314286<br />Survey_Year: 2016<br />Density: 0.23314286","Survey_Year: 2017<br />mean_dens: 0.19066667<br />Survey_Year: 2017<br />Density: 0.19066667","Survey_Year: 2018<br />mean_dens: 0.17980000<br />Survey_Year: 2018<br />Density: 0.17980000","Survey_Year: 2019<br />mean_dens: 0.14880000<br />Survey_Year: 2019<br />Density: 0.14880000"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":15.1181102362205,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1993,1994,1995,1997,1998,1999,2000,2001,2003,2004,2005,2006,2007,2009,2010,2011,2013,2014,2015,2016,2017,2018,2019],"y":[0.11,0.145,0.16,0.19,0.15,0.255,0.2225,0.17,0.25,0.24,0.19,0.055,0.32,0.223333333333333,0.13,0.075,0.138,0.0763333333333333,0.2396,0.233142857142857,0.190666666666667,0.1798,0.1488],"text":["mean_dens: 0.11000000<br />mean_dens - se: 0.10591752<br />mean_dens + se: 0.1140825<br />width: 0.5<br />Survey_Year: 1993<br />Density: 0.11000000","mean_dens: 0.14500000<br />mean_dens - se: 0.11598851<br />mean_dens + se: 0.1740115<br />width: 0.5<br />Survey_Year: 1994<br />Density: 0.14500000","mean_dens: 0.16000000<br />mean_dens - se:         NA<br />mean_dens + se:        NA<br />width: 0.5<br />Survey_Year: 1995<br />Density: 0.16000000","mean_dens: 0.19000000<br />mean_dens - se:         NA<br />mean_dens + se:        NA<br />width: 0.5<br />Survey_Year: 1997<br />Density: 0.19000000","mean_dens: 0.15000000<br />mean_dens - se:         NA<br />mean_dens + se:        NA<br />width: 0.5<br />Survey_Year: 1998<br />Density: 0.15000000","mean_dens: 0.25500000<br />mean_dens - se: 0.19821092<br />mean_dens + se: 0.3117891<br />width: 0.5<br />Survey_Year: 1999<br />Density: 0.25500000","mean_dens: 0.22250000<br />mean_dens - se: 0.14586504<br />mean_dens + se: 0.2991350<br />width: 0.5<br />Survey_Year: 2000<br />Density: 0.22250000","mean_dens: 0.17000000<br />mean_dens - se: 0.12641101<br />mean_dens + se: 0.2135890<br />width: 0.5<br />Survey_Year: 2001<br />Density: 0.17000000","mean_dens: 0.25000000<br />mean_dens - se: 0.15000000<br />mean_dens + se: 0.3500000<br />width: 0.5<br />Survey_Year: 2003<br />Density: 0.25000000","mean_dens: 0.24000000<br />mean_dens - se:         NA<br />mean_dens + se:        NA<br />width: 0.5<br />Survey_Year: 2004<br />Density: 0.24000000","mean_dens: 0.19000000<br />mean_dens - se:         NA<br />mean_dens + se:        NA<br />width: 0.5<br />Survey_Year: 2005<br />Density: 0.19000000","mean_dens: 0.05500000<br />mean_dens - se: 0.05000000<br />mean_dens + se: 0.0600000<br />width: 0.5<br />Survey_Year: 2006<br />Density: 0.05500000","mean_dens: 0.32000000<br />mean_dens - se: 0.19576903<br />mean_dens + se: 0.4442310<br />width: 0.5<br />Survey_Year: 2007<br />Density: 0.32000000","mean_dens: 0.22333333<br />mean_dens - se: 0.04000000<br />mean_dens + se: 0.4066667<br />width: 0.5<br />Survey_Year: 2009<br />Density: 0.22333333","mean_dens: 0.13000000<br />mean_dens - se: 0.11000000<br />mean_dens + se: 0.1500000<br />width: 0.5<br />Survey_Year: 2010<br />Density: 0.13000000","mean_dens: 0.07500000<br />mean_dens - se: 0.07000000<br />mean_dens + se: 0.0800000<br />width: 0.5<br />Survey_Year: 2011<br />Density: 0.07500000","mean_dens: 0.13800000<br />mean_dens - se: 0.09094684<br />mean_dens + se: 0.1850532<br />width: 0.5<br />Survey_Year: 2013<br />Density: 0.13800000","mean_dens: 0.07633333<br />mean_dens - se: 0.04427956<br />mean_dens + se: 0.1083871<br />width: 0.5<br />Survey_Year: 2014<br />Density: 0.07633333","mean_dens: 0.23960000<br />mean_dens - se: 0.15579928<br />mean_dens + se: 0.3234007<br />width: 0.5<br />Survey_Year: 2015<br />Density: 0.23960000","mean_dens: 0.23314286<br />mean_dens - se: 0.17358799<br />mean_dens + se: 0.2926977<br />width: 0.5<br />Survey_Year: 2016<br />Density: 0.23314286","mean_dens: 0.19066667<br />mean_dens - se: 0.13723655<br />mean_dens + se: 0.2440968<br />width: 0.5<br />Survey_Year: 2017<br />Density: 0.19066667","mean_dens: 0.17980000<br />mean_dens - se: 0.11839935<br />mean_dens + se: 0.2412007<br />width: 0.5<br />Survey_Year: 2018<br />Density: 0.17980000","mean_dens: 0.14880000<br />mean_dens - se: 0.11870449<br />mean_dens + se: 0.1788955<br />width: 0.5<br />Survey_Year: 2019<br />Density: 0.14880000"],"type":"scatter","mode":"lines","opacity":1,"line":{"color":"transparent"},"error_y":{"array":[0.00408248290463863,0.029011491975882,null,null,null,0.0567890834580027,0.076634957210575,0.0435889894354067,0.1,null,null,0.005,0.124230967690562,0.183333333333333,0.02,0.005,0.0470531614240743,0.032053774262081,0.0838007159873947,0.0595548680875474,0.0534301205106051,0.061400651462342,0.0300955146159689],"arrayminus":[0.00408248290463863,0.029011491975882,null,null,null,0.0567890834580027,0.076634957210575,0.0435889894354067,0.1,null,null,0.005,0.124230967690562,0.183333333333333,0.02,0.005,0.0470531614240744,0.032053774262081,0.0838007159873947,0.0595548680875474,0.0534301205106051,0.061400651462342,0.0300955146159689],"type":"data","width":1.96622715706508,"symmetric":false,"color":"rgba(0,0,0,1)"},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":22.468797564688,"r":7.30593607305936,"b":28.846040403857,"l":45.4960564549606},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[1991.59,2020.41],"tickmode":"array","ticktext":["1995","2000","2005","2010","2015","2020"],"tickvals":[1995,2000,2005,2010,2015,2020],"categoryorder":"array","categoryarray":["1995","2000","2005","2010","2015","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":15.9402241594022},"tickangle":-45,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.0104,0.6176],"tickmode":"array","ticktext":["0.1","0.2","0.3","0.4","0.5","0.6"],"tickvals":[0.1,0.2,0.3,0.4,0.5,0.6],"categoryorder":"array","categoryarray":["0.1","0.2","0.3","0.4","0.5","0.6"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"Moose Density per square km","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.96751968503937},"annotations":[{"text":"WMU","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","width":850,"barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"75207880b57":{"colour":{},"x":{},"y":{},"type":"scatter"},"75205b2e75b7":{"colour":{},"x":{},"y":{}},"75207d2451e4":{"x":{},"y":{},"x.1":{},"y.1":{}},"752017fa7f2a":{"y":{},"ymin":{},"ymax":{},"width":{},"x":{},"y.1":{}}},"cur_data":"75207880b57","visdat":{"75207880b57":["function (y) ","x"],"75205b2e75b7":["function (y) ","x"],"75207d2451e4":["function (y) ","x"],"752017fa7f2a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 2. Moose Density over Time, by WMU.
+</p>
+</div>
+<p><br></p>
+<p>The map below (Figure 3) displays the moose density associated with each WMU in the study region, calculated from the most recent aerial survey undertaken<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>.</p>
+<div class="figure" style="text-align: center">
+<img src="png_files/dens.png" alt="Figure 3. Moose density in the OSR by WMU (labeled), using most recently available aerial survey." width="70%" />
+<p class="caption">
+Figure 3. Moose density in the OSR by WMU (labeled), using most recently available aerial survey.
+</p>
+</div>
+<p><br></p>
+<p>Directional trends in moose abundance over time are not apparent with the aerial survey data, although more rigorous statistical testing for this could be done. However, detection of a long-term trend may be confounded by the shift from random block to distance sampling in 2014.</p>
+<p>Moose density does appear to vary spatially by WMU, with higher densities found in the western and southern WMUs of the OSR. Given the availability of data on both ‘detection’ and ‘effort’ (i.e. where moose were seen vs where they weren’t), further analyses could be done to test for moose associations with various natural and anthropogenic features. In a companion report, Frey and Fisher (2019) demonstrate the useful of this approach for white-tailed deer. <br></p>
+</div>
+<div id="estimates-from-remote-camera-deployments" class="section level4">
+<h4>Estimates from Remote Camera Deployments</h4>
+<p>Several studies and monitoring programs have deployed remote cameras in the OSR, including the Wildlife Habitat Effectiveness and Connectivity (WHEC) program (Boutin et al., 2015), the ABMI’s ongoing grid-based mammal monitoring program, and the Alberta Boreal Deer Project (ABDP). Several companies operating in the OSR use cameras to monitor animal populations within their lease areas, and other monitoring programs use cameras to study other focal species (e.g. caribou) but also detect moose<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>.</p>
+<p>Displayed below in Figure 4 is the proliferation of camera deployments in the OSR since 2011<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>. Patterns in geographic placement of cameras is reflected in the scientific questions the deployments were set up to answer. For instance, through the WHEC program, camera data was used to assess how moose use river valley cooridors in the presence of anthropogenic disturbance (e.g. mine sites), and thus cameras were primarily deployed along these cooridors. In contrast to this, ABMI deployments are systematically spread throughout the region in order to sample the available habitats in a representative fashion.</p>
+<br> <br>
+<div class="figure" style="text-align: center">
+<img src="png_files/deploy.png" alt="Figure 4. Locations of camera deployments in the OSR, by year. Brown coloured deployments are those placed by the ABMI; green are those from other monitoring programs and studies." width="90%" />
+<p class="caption">
+Figure 4. Locations of camera deployments in the OSR, by year. Brown coloured deployments are those placed by the ABMI; green are those from other monitoring programs and studies.
+</p>
+</div>
+<p><br></p>
+<p>A number of methods have been developed to estimate population density using remote cameras (Burton et al., 2015), including those that rely on individual recognition (i.e. marked populations) through a capture-recapture approach to account for imperfect detection. An alternative to this approach, when individual identification is not feasible, is the random encounter model, which specifies animal density as a function of camera-trapping rate, movement speed, and the area in which animals are successfully detected. An extension of this approach was recently developed by Nakashima et al (2018), who proposed a method utilizing animal staying time (in front of the camera) instead of movement rates (which has hindered adoption of the earlier random encounter model).</p>
+<p>The ABMI estimates the density of mammals such as moose from camera data using the cumulative residency time that the species is captured on camera, a method that closely aligns with the model described in Nakashima et al (2018). This method does not rely on individual recognition or movement rates, but rather estimates density by assuming that animals use (and move across) the sampled area randomly such that the total residency time in any given location is a function of the number of animals in a fixed area.</p>
+<p>A graphical comparison of moose density estimates derived from ABMI (and associated partners’<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>) cameras and Government of Alberta aerial surveys is displayed below, using WMU as the sample unit. Camera estimates were calculated using all available data between 2015-2018, whereas aerial survey estimates are obtained from a single year of sampling within 2014-2019 (when the distance sampling technique was adopted). A total of 34 WMUs across the province have been sampled with both methods and have corresponding moose density estimates, including 17 within the OSR.</p>
+<br> <br>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-8-1.png" alt="Figure 5. Comparison of density estimates between aerial surveys and remote cameras." width="80%" />
+<p class="caption">
+Figure 5. Comparison of density estimates between aerial surveys and remote cameras.
+</p>
+</div>
+<p><br></p>
+<p>The density estimates produced by cameras are generally higher than those from aerial surveys, but the two are positively correlated at the WMU-scale (adj-R<span class="math inline">\(^2\)</span> value of 0.68). Figure 5 displays the relationship between the two estimates using both a linear and a generalized additive model.</p>
+<p>Moose density estimates from remote cameras are likely to be biased upwards. The first reason for this is a practical element of using cameras: deployments are usually placed in small openings so that they are not obscured by vegetation. However, moose tend to use these areas preferentially for foraging (at least in the summer), leading to overestimates of density. The second reason is that moose are also attracted to the cameras, which leads them to spend longer in front of the camera than they would otherwise. Given these a priori expectations, a calibration procedure was developed using the linear model shown above, adjusting for the number of cameras in the WMU (details of which can be read about here). A calibration coefficient of 0.406 can be used to estimate expected moose density via aerial survey when a camera estimate is known (i.e. camera estimates are approximately 2.46 times higher than aerial survey estimates).</p>
+<p>Table 1 displays the moose density estimates associated with WMU’s in the OSR along with reported confidence intervals. Confidence intervals around camera estimates are related to the number of deployments in each WMU, such that confidence increases (and intervals tighten) as more cameras are available in a sampling unit.</p>
+<p><br> <div id="htmlwidget-b0eaabda67d43c14f0e4" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b0eaabda67d43c14f0e4">{"x":{"filter":"top","filterHTML":"<tr>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"2014\" data-max=\"2019\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"0.04\" data-max=\"0.5\" data-scale=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"3\" data-max=\"82\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none; position: absolute; width: 200px;\">\n      <div data-min=\"0\" data-max=\"5.81\" data-scale=\"2\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","caption":"<caption>Table 1. WMU-level Density Estimates Using Data from Aerial\n          Surveys and ABMI Remote Cameras<\/caption>","data":[["530","531","520","512","518","529","519","515","542","502","511","527","258","503","256","516","260","514","540","541","523","254","500","501","544","651","841","526","504","509","517","528","726"],[2018,2016,2018,null,null,2017,2015,2019,2016,2017,2014,2015,2016,2015,2019,2018,2016,2017,null,null,2018,null,2016,2019,2018,null,null,2016,2015,2016,2019,2019,2014],[0.12,0.07,0.16,null,null,0.09,0.04,0.21,0.07,0.27,0.04,0.28,0.16,0.3,0.11,0.08,0.16,0.21,null,null,0.42,null,0.32,0.23,0.12,null,null,0.48,0.5,0.37,0.08,0.1,0.05],["0.1, 0.14",null,"0.12, 0.22",null,null,null,"0.1, 0.18",null,"0.06, 0.09",null,"0.08, 0.18","0.22, 0.37","0.14, 0.19","0.25, 0.35",null,"0.06, 0.1",null,null,null,null,"0.33, 0.54",null,"0.26, 0.4",null,null,null,null,null,null,null,null,null,"0.04, 0.08"],[82,80,64,63,63,33,32,28,28,24,24,20,19,14,12,12,8,8,8,8,7,7,4,4,4,4,4,3,null,null,null,null,null],[0.69,0.27,0.65,0.48,0.38,0.62,0.37,0.24,0,0.39,0.67,1.03,1.4,0.93,0.31,0.01,0,0,0,0,1.09,3.24,0,0.07,0.16,0.01,0.89,5.81,null,null,null,null,null],["0.47, 0.95","0.17, 0.39","0.4, 0.96","0.31, 0.69","0.23, 0.55","0.29, 1.08","0.18, 0.65","0.11, 0.42",null,"0.18, 0.69","0.41, 1","0.44, 1.94","0.39, 3.23","0.3, 2","0, 0.74","0, 0.02",null,null,null,null,"0.35, 2.31","0.42, 9.81",null,"0, 0.21",null,null,"0.06, 3.11","2.75, 10.4",null,null,null,null,null]],"container":"<table class=\"cell-border-stripe\">\n  <thead>\n    <tr>\n      <th>WMU<\/th>\n      <th>Aerial Survey Year<\/th>\n      <th>Density (Aerial)<\/th>\n      <th>90% CI - Aerial<\/th>\n      <th>Camera Deployments<\/th>\n      <th>Density (Camera)<\/th>\n      <th>90% CI - Camera<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":10,"scrollX":true,"columnDefs":[{"className":"dt-right","targets":[1,2,4,5]}],"order":[],"autoWidth":false,"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script></p>
+</div>
+</div>
+<div id="lambda" class="section level3">
+<h3>Lambda</h3>
+<p>The rate of population change from one time period to the next is referred to as lambda. We calculated this parameter for 15 WMUs in the OSR using aerial survey reports between 1993 and 2019 (Table 2). Across all WMUs and years, mean lambda of moose in the OSR was 1.01, reflecting a stable rate of change in population over time. However, variation was found between WMUs, with growth rates generally decreasing with latitude (Figure 6). Further analysis could be done to model lambda values as a function of the degree of disturbance (measured by extent of human footprint, for example) by WMU.</p>
+<div id="htmlwidget-c3aeba4b3c06dcad7597" style="width:700px;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c3aeba4b3c06dcad7597">{"x":{"filter":"none","caption":"<caption>Table 2. Calculations of Lambda in 15 WMUs of the OSR. Includes\n          WMUs which have been surveyed at least twice between 1993-2019.<\/caption>","data":[["500","503","504","511","512","515","517","518","519","527","528","529","530","531","542"],[1.08,1.04,1.09,1.01,1.04,1,0.99,0.99,1,1.01,0.94,1.01,1,1.01,0.98],[3,2,3,4,3,4,6,4,5,3,3,5,3,5,4],[2001,1995,2001,1994,1999,1999,1993,1993,1993,2000,2000,1993,1994,1994,1994],[2016,2015,2015,2014,2013,2019,2019,2013,2015,2015,2019,2017,2018,2016,2016]],"container":"<table class=\"cell-border stripe\">\n  <thead>\n    <tr>\n      <th>WMU<\/th>\n      <th>Lambda<\/th>\n      <th>Number of Surveys<\/th>\n      <th>First Year<\/th>\n      <th>Last Year<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-left","targets":1},{"className":"dt-right","targets":[2,3,4]}],"pageLength":14,"dom":"t","order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[10,14,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<div class="figure" style="text-align: center">
+<img src="png_files/lamb.png" alt="Figure 6. Moose lambda in WMUs across the OSR." width="70%" />
+<p class="caption">
+Figure 6. Moose lambda in WMUs across the OSR.
+</p>
+</div>
+<p>Only one document from the literature (Rolley and Keith, 1980) estimated the geometric rate of increase of moose populations in the northern portion Alberta directly. Although the study area was not within the OSR, we present the values here as a historical reference: 1.24 and 1.03 in 1965 and 1979, respectively, around Rochester, Alberta, which is south of the OSR.</p>
+</div>
+<div id="demographics" class="section level3">
+<h3>Demographics</h3>
+<p>Government of Alberta aerial surveys also estimate calf:cow and bull:cow ratios for each WMU. When averaged across WMUs in a given year, no clear trends through time in either ratio were observed (Figure 7). Similarly, no spatial trends are immediately apparent either (Figure 8).</p>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-14-1.png" alt="Figure 7. Changes in moose sex and calf ratios over time in the OSR." width="90%" />
+<p class="caption">
+Figure 7. Changes in moose sex and calf ratios over time in the OSR.
+</p>
+</div>
+<p><br></p>
+<div class="figure" style="text-align: center">
+<img src="png_files/demo.png" alt="Figure 8. Spatial variation in moose sex and calf ratios across the OSR. The most recent datapoints of these demographic variables were used." width="100%" />
+<p class="caption">
+Figure 8. Spatial variation in moose sex and calf ratios across the OSR. The most recent datapoints of these demographic variables were used.
+</p>
+</div>
+<p><br></p>
+<p>Camera images may also be a source of information regarding moose demographics. Although not reported on to date, images from ABMI deployments are categorized by gender and age and could be used to corroborate demographic results from aerial surveys.</p>
+<hr />
+</div>
+</div>
+<div id="distribution-and-habitat" class="section level2">
+<h2>Distribution and Habitat</h2>
+<p>Moose are boreal forest specialists and generally their distribution does not extend south of the boreal natural region (Karns 1997). In Alberta, however, moose are expanding southward and are increasing in the parkland region and even the grassland region (Bjorge et al 2018; Alberta Environment and Parks, 2018). Major drivers of the distribution of moose include food, cover and climate (Karns 1997), but moose habitat varies seasonally and is driven by the availability of food (aquatic plants, willow, birch, and poplar), cover from predation, and snowdepth (Dussault et al., 2005).</p>
+<p>Snowtracking data collected by the ABMI has been used to generate estimates of moose habitat association with various natural landcover types. The presence of moose snowtracks along a sampled transect is used as evidence of occurrence, and this occurrence can be modeled as a function of the surrounding landscape within a buffer of the transect. Using this method, the ABMI reports on moose relative abundance with 250-m wide buffers; other researchers (e.g. Toews et al 2018) have used ABMI snowtrack data with 1,500-m wide buffers. Using this data, moose relative abundance was found to be positively associated with increasing forest stand age, regardless of forest type (upland/black spruce, pine, deciduous, mixedwood), as well as treed fen and swamp habitats. However, because this data was collected only in the winter, these models would not pick up seasonal effects (i.e. different habitat preferences in the summer). Full results are displayed graphically in Appendix A.</p>
+<p>Camera data can also be used to infer moose habitat preferences. Fisher and Burton (2018), in their study of the Christina Lake landscape within the OSR, studied the effect of various landscape features on moose distribution using camera images from deployment sites between October 2011 to October 2014. They constructed an index of relative abundance for moose (among other mammalian species) and modeled it as a function of the surrounding landscape around each site (using various buffer sizes). The model with the best supported scale for moose, determined using AIC weights, was a 250-m buffer around each deployment. Among natural features, Fisher and Burton (2018) found that an increased proportion of lowland/upland spruce, mixedwood, and open wetlands positively impacted moose relative abundance.</p>
+<p>The ABMI also uses data from camera deployments to establish species-specific habitat models. Separate models for each species are run for the northern and southern portion of the province; the northern model includes the boreal and foothills natural regions, and encompasses the OSR. Therefore, here we report results only from the northern model, which includes both natural and anthropegenic features as covariates. Additionally, separate models are estimated for camera deployments during the summer and the winter, in order to account for differing detection rates as vegetation grows and obscures the camera field of view, as well as seasonal differences in species’ habitat use patterns. In contrast to methods employed in Fisher and Burton (2018), no buffers around deployments are used; rather, only the singular habitat (or anthropogenic feature) the animal was detected in is used in the model. A combination of presence/absence and abundance given presence modeling procedures are used to predict habitat association. In the northern region over four years of sampling between 2015-2018, moose have been detected at 698 of 2627 (27%) summer camera locations, and 273 of 2569 (11%) winter camera locations, yielding nearly 80,000 images across 4,500 series<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>.</p>
+<p>Results from ABMI camera models, for both summer and winter, can be viewed in Appendix A alongside the models using snowtracking data. In the summer, the models of habitat association suggest that moose show a preference for shrub and grassland areas, as well as marshes. In addition, moose prefer older deciduous forest, but younger mixedwood areas. In the winter, an opposite preference for mixedwood is found, which is in line with findings from the snowtracking models (which collected data only in the winter).</p>
+<p>Other studies have used various habitat covariates to explain moose abundance, occupancy, or selection. For example, Wasser et al (2011) report that moose selection was primarily related to areas associated with increased browse/forage availability, such as shrubland, areas within 100m of lakes and stremas (i.e. riparian proximity), and lower densities of tree cover. Boutin et al (2015) found that moose strongly selected for dogwood, swamp, and shrub habitats, and that there were relatively minor shifts in habitat use between winter and summer seasons.</p>
+</div>
+<div id="impacts-of-human-disturbance" class="section level2">
+<h2>Impacts of Human Disturbance</h2>
+<p>In this section we discuss research findings related to moose behavioural response to human disturbance, and potential implications to the distribution and population of moose in the OSR. As outlined in the sections above, alternative monitoring methods, and modeling approaches within methods, can be used to understand how moose respond to and associate with various landscape features.</p>
+<p>Behaviourally, moose respond in different ways to human disturbance within the OSR. Linear features, which include for example pipelines, roads, trails, seismic lines, and cutlines, are highly prevalent in the OSR and have been implicated in the decline of another ungulate population - woodland caribou (e.g. Dyer et al., 2001; Latham et al., 2011). Because of these reasons, the relationship between moose and linear features has been studied extensively. Wasser et al (2011) used collections of scat samples at study sites within the Athabasca oilsands region to investigate how moose respond behaviourally to roads. They found that moose avoid areas within 250-m of both secondary and tertiary (e.g. oil and gas exploration) roads; however, beyond this distance, no effect was found, indicating a lower level of sensitivity to road disturbance than caribou (which were also the subject of this study). Additionally, Wasser et al (2011) investigated the nutritional composition of moose scat and found improved nutrition and health among moose in areas with higher linear density. This is due to higher availability of forage around linear features. Therefore, although being near linear features such as roads present a security risk (e.g. less cover from predators such as wolves and humans), the findings suggest moose will still select for areas with higher forage availability.</p>
+<p>Fisher and Burton (2018) also investigated the impact of certain linear features, including pipelines, trails, and both conventional and 3D seismic lines in their study of Christina Lake. Figure below displays the reported coefficients of effect on moose relative abundance.</p>
+<br> <br>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-17-1.png" alt="Figure 9. Estimated effect of landscape variables on moose relative abundance - results from Fisher and Burton (2018)." width="90%" />
+<p class="caption">
+Figure 9. Estimated effect of landscape variables on moose relative abundance - results from Fisher and Burton (2018).
+</p>
+</div>
+<p><br></p>
+<p>Along with well sites, three linear feature types were most strongly implicated as having a negative effect on moose abundance: cutlines, trails, and pipelines. Dunne and Quinn (2009), using both remote cameras and snow tracking, found that the impact of pipelines as a phyiscal barrier to moose movement could be at least partially mitigated by the construction of crossing structures, and they outline the minimum conditions necessary for moose to begin using these crossings (e.g. minimum pipeline clearance from the ground of 140 cm).</p>
+<p>Using the combined summer/winter northern region model from ABMI’s camera data, linear footprint is broken down into two categories: hard and soft. Hard linear footprint includes feature types such as roads and railines, whereas soft includes partially (or wholly) vegetated footprint such as seismic lines, pipelines, and transmission lines. Moose were not found to use hard linear footprint as habitat. Soft linear footprint was used by moose sparingly: less than native shrub, grassland, older deciduous forest, or younger mixedwood, but near the same amount as spruce, pine, and treed fen or bog. Using ABMI snowtrack data, Toews et al (2017) found that moose displayed a negative response to roads within a 250-m spatial scale. The available evidence suggests that moose selection of linear features is governed by a balance between increased predation risk and higher availability of food; while at a local level moose may avoid, they might also benefit from roads at a broader scale due to utilization of roadside forage, salt deposits, and as travel cooridors (Bowman et al., 2010; Toews et al., 2017).</p>
+<p>Block, or polygonal, features also impact moose behaviour and distribution. As Figure 9 displays, findings from Fisher and Burton (2018) suggest that moose are positively associated with forestry cutblocks and other block features, although well sites have a negative impact. Toews et al (2017) also report that moose are positively associated with new and intermediate-aged cutblocks (10-40 years). The findings from these studies are corroborated with results from both ABMI’s snowtracking and camera models. Cutblocks, in which early-stage successional vegetation is prominent, are associated with elevated moose abundance in both models. Similar to hard linear footprint, moose are not found in industrial sites such as mines - this makes sense, given that forest cover is removed from the landscape and physical access obstructed - and moose abundance was also low at smaller-sized well sites. Boutin et al (2015) also report that moose avoid mine sites in all seasons (winter, summer, and calving), but beyond 250-m of the mine edge this effect drops off.</p>
+<p>As Toews et al (2017) suggest, moose may just be extreme generalists in their habitat preferences, meaning they are highly flexible in both their diet and habitat use. Varying spatially and temporally with season and life cycle (e.g. calving), habitat use is governed by a complex interplay between many factors such as snow depth (Dussault et al., 2005; Poole and Stuart-Smith, 2006), weather conditions and temperature (Lenarz et al., 2009), and predator avoidance. While some studies found moose response to specific human footprint features at small scales (e.g. Wasser et al., 2011), the findings from Toews et al (2017) suggest that at larger spatial scales human footprint is a relatively poor predictor of moose relative abundance given the interplay of factors listed above and the resulting inherent habitat flexibility that moose display. An optimal balance likely exisits between open sites (availability of food), mature forested area (cover from predators), and the relative heterogeneity of these habitats across the landscape - rather than just the simple proportion or area of one individual feature. Relatedly, Osko et al (2004) compared the habitat preferences between two geographically distinct groups of moose in the OSR using radio telemetry and found that preferences were not fixed, but rather depended on the available relative habitat composition.</p>
+<div id="other-human-impacts" class="section level3">
+<h3>Other Human Impacts</h3>
+<p>As <em>in situ</em> drilling activity has increased within the OSR during recent years, questions have arisen surrounding possible contamination and toxicant levels in species that live around these areas. Lundin et al (2015) collected scat samples from moose over a 2500 km<span class="math inline">\(^2\)</span> area south of Fort McMurrary within the OSR and found evidence of exposure to polycyclic aromatic hydrocarbons (PAHs) in areas where the most intensive oil extraction and exploration activity has occurred.</p>
+</div>
+</div>
+<div id="predictions-of-relative-abundance-in-the-osr" class="section level2">
+<h2>Predictions of Relative Abundance in the OSR</h2>
+<p>The ABMI uses the habitat association models from camera data, including covariates describing how species vary spatially and with climate gradients, to predict species relative abundance in 1 km<span class="math inline">\(^2\)</span> spatial units under both <em>current</em> and <em>reference</em> conditions. Current condition predictions are made based on the vegetation and human footprint currently present in each 1 km<span class="math inline">\(^2\)</span> unit, whereas reference condition predictions are made after human footprint has been erased and the native vegetation ‘backfilled’ in the unit based on the surrounding area. This reference condition represents a ‘best guess’ as to what the landscape looked like before human disturbance, and allows for quantification of total human impact.</p>
+<p>The figure belows displays ABMI predictions of moose relative abundance across the OSR<a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a>. Pixels in red are areas predicted to have higher abundance, whereas in areas of dark blue moose are expected to be less abundant or absent. <br> <br></p>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-19-1.png" alt="Figure 10. Maps of moose relative abundance in the OSR under current and reference conditions." width="70%" />
+<p class="caption">
+Figure 10. Maps of moose relative abundance in the OSR under current and reference conditions.
+</p>
+</div>
+<p><br></p>
+</div>
+<div id="sector-effects-in-the-osr" class="section level2">
+<h2>Sector Effects in the OSR</h2>
+<p>The ABMI calculates a metric called <em>intactness</em>, which is a way to compare the current and reference abundances in each pixel. For each 1 km<span class="math inline">\(^2\)</span> unit the % ratio between predicted current and reference conditions is determined. Units depicted in green indicate that moose are predicted to have higher abundance under present than reference conditions, whereas in pink units the opposite is true. On this intactness scale, a value of 100 (Figure ) indicates that the exact same relative abundance is predicted under both sets of conditions. The intensity of the colouring indicate the relative magnitude of increase or decrease. For example, more intensely pink coloured pixels indicate that moose are much less prevalent in those areas under current conditions than they would have been under a reference landscape. Unsuprisingly, active oilsands mine sites display low intactness; areas of the OSR to the west and south, which are dominated by agriculture, also display low intactness.</p>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-20-1.png" alt="Figure 11. Map of moose intactness in the OSR." width="70%" />
+<p class="caption">
+Figure 11. Map of moose intactness in the OSR.
+</p>
+</div>
+<p>Effects of various individual human footprint groups, i.e. sectors, on intactness can be also be parsed out. This is referred to as <em>sector effects</em>, which is an isolation of impacts on a single species relative abundance due to a single human development type such as energy, forestry, or agriculture. This metric is the product of the area of the sector’s footprint and the average “per unit area” of that sector’s footprint on species intactness.</p>
+<p>Displayed below is the regional sector effects associated with moose in the OSR. Agriculture has the highest negative impact on moose intactness, whereas forestry has the highest positve impact. This corroborates findings from studies discussed above that indicate that moose can benefit from the increased abundance of forage available at harvested sites (e.g. Toews et al., 2017; Fisher and Burton, 2018). Finally, at a regional level, the energy sector has had a small negative impact on moose relative abundance, most of which is concentrated at active open pit mine sites. However, the transport sector, which is often affiliated with the energy sector in the OSR, also has a negative impact on moose relative abundance.</p>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-21-1.png" alt="Figure 12. Regional sector effects on moose in the OSR." width="70%" />
+<p class="caption">
+Figure 12. Regional sector effects on moose in the OSR.
+</p>
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>We reviewed government and non-government reports, and peer reviewed papers to assess the state of knowledge concerning the impact of human disturbance on moose populations in the Oil Sands Region (OSR) of Alberta. Behaviourally, moose demonstrate avoidance of human features at a local and landscape level; however, no strong trends in population density over time were uncovered. At a regional scale, the relative abundance of moose in the OSR has decreased when compared to a reference landscape. While the energy sector has played a part in this, particularly around active oilsands mine sites, agriculture has had a more significant impact. Conversely, in general, forestry has had a net positive impact as recently harvested sites provide a higher abundance of forage for food.</p>
+<div id="recommendations-for-future-work" class="section level2">
+<h2>Recommendations for Future Work</h2>
+<ul>
+<li>Moose monitoring, and mammal monitoring generally, in the OSR would benefit from the development of a standardized procedure to compare density and habitat association estimates both between and within methods. A logical first step would be the establishment of a common repository for mammal data collected within the OSR, including standardized metadata outlining important parameters about data collection (Burton et al., 2015). From there, different modeling procedures can be tested out and compared on different datasets; for example, with and without buffers around camera deployment sites.<br />
+</li>
+<li>A review should be conducted outlining principles of camera placement in order to guide future camera monitoring efforts and sampling design.</li>
+</ul>
+</div>
+</div>
+<div id="literature-cited" class="section level1">
+<h1>Literature Cited</h1>
+<p>Alberta Biodiversity Monitoring Institute (ABMI). (2016). 2016 Human Footprint Inventory. www.abmi.ca.</p>
+<p>Alberta Environment and Parks, Government of Alberta. (2018). Moose. <a href="http://aep.alberta.ca/fish-wildlife/wild-species/mammals/deer/moose.aspx" class="uri">http://aep.alberta.ca/fish-wildlife/wild-species/mammals/deer/moose.aspx</a>.</p>
+<p>Bjorge, R. R., Anderson, D., Herdman, E., &amp; Stevens, S. (2018). Status and Management of Moose in the Parkland and Grassland Regions of Alberta. Alces: A Journal Devoted to the Biology and Management of Moose, 54, 71-84.</p>
+<p>Boutin, S., H. Bohm, E. Neilson, A. Droghini, &amp; C. de la Mare. (2015). Wildlife Habitat Effectiveness and Connectivity Research Program, Final Report.</p>
+<p>Bowman, J., J. C. Ray, A. J. Magoun, D. S. Johnson, &amp; F. N. Dawson. (2010). Roads, logging, and the large mammal community of an eastern Canadian boreal forest. Canadian Journal of Zoology 88: 454–467.</p>
+<p>Buckland, S. T., Anderson, D. R., Burnham, K. P., Laake, J. L., Borchers, D. L., &amp; Thomas, L. (2004). Advanced distance sampling (Vol. 2). Oxford: Oxford University Press.</p>
+<p>Burton, A.C. (2014). Monitoring mammals with camera traps: 2012-13 summary and recommendations. Alberta Biodiversity Monitoring Institute, Edmonton, Canada.</p>
+<p>Burton, A. C., Neilson, E., Moreira, D., Ladle, A., Steenweg, R., Fisher, J. T., Bayne, E. &amp; Boutin, S. (2015). Wildlife camera trapping: a review and recommendations for linking surveys to ecological processes. Journal of Applied Ecology, 52(3), 675-685.</p>
+<p>Dunne, B. M., &amp; Quinn, M. S. (2009). Effectiveness of above-ground pipeline mitigation for moose (Alces alces) and other large mammals. Biological conservation, 142(2), 332-343.</p>
+<p>Dussault, C., J. P. Ouellet, R. Courtois, J. Hout, L. Breton, &amp; H. Jolicoeur. (2005). Linking moose habitat selection to limiting factors. Ecography 28:619–628.</p>
+<p>Dyer, S. J., O’Neill, J. P., Wasel, S. M., &amp; Boutin, S. (2001). Avoidance of industrial development by woodland caribou. The Journal of Wildlife Management, 531-542.</p>
+<p>Fisher, J. T., &amp; Burton, A. C. (2018). Wildlife winners and losers in an oil sands landscape. Frontiers in Ecology and the Environment, 16(6), 323-328.</p>
+<p>Karns, P. D. (1997). Population Distribution, Density and Trends. Pages 125–140 in A. W. Franzmann and C. C. Schwartz, editors. Ecology and management of the North American moose. Smithsonian Institution Press.</p>
+<p>Latham, A. D. M., Latham, M. C., Boyce, M. S., &amp; Boutin, S. (2011). Movement responses by wolves to industrial linear features and their effect on woodland caribou in northeastern Alberta. Ecological Applications, 21(8), 2854-2865.</p>
+<p>Lenarz, M. S., Nelson, M. E., Schrage, M. W., &amp; Edwards, A. J. (2009). Temperature mediated moose survival in northeastern Minnesota. The Journal of Wildlife Management, 73(4), 503-510.</p>
+<p>Lundin, J. I., Riffell, J. A., &amp; Wasser, S. K. (2015). Polycyclic aromatic hydrocarbons in caribou, moose, and wolf scat samples from three areas of the Alberta oil sands. Environmental pollution, 206, 527-534.</p>
+<p>Nakashima, Y., Fukasawa, K., &amp; Samejima, H. (2018). Estimating animal density without individual recognition using information derivable exclusively from camera traps. Journal of applied ecology, 55(2), 735-744.</p>
+<p>Neilson, E. W., &amp; S. Boutin. (2017). Human disturbance alters the predation rate of moose in the Athabasca oil sands. Ecosphere 8:1–12.</p>
+<p>Osko, T. J., Hiltz, M. N., Hudson, R. J., &amp; Wasel, S. M. (2004). Moose habitat preferences in response to changing availability. The Journal of Wildlife Management, 68(3), 576-584.</p>
+<p>Peters, S.H., P.F. Jones, and R.A. Anderson. 2018. Assessment of the Alberta moose hunter survey app, 2012 to 2016. Technical Report, produced by Alberta Conservation Association, Blairmore, Alberta, Canada.</p>
+<p>Peters, W., Hebblewhite, M., Smith, K. G., Webb, S. M., Webb, N., Russell, M., &amp; Anderson, R. B. (2014). Contrasting aerial moose population estimation methods and evaluating sightability in west‐central Alberta, Canada. Wildlife Society Bulletin, 38(3), 639-649.</p>
+<p>Poole, K. G., &amp; Stuart-Smith, K. (2006). Winter habitat selection by female moose in western interior montane forests. Canadian Journal of Zoology, 84(12), 1823-1832.</p>
+<p>Rolley, R. E., &amp; Keith, L. B. (1980). Moose Population Dynamics and Winter Habitat Use at Rochester Alberta Canada 1965-1979. Canadian Field Naturalist, 94(1), 9.</p>
+<p>Schneider, R. R., S. Wasel, &amp; A. Press. (2000). The Effect of Human Settlement on the Density of Moose in Northern Alberta. Journal of Wildlife Management 64:513–520.</p>
+<p>Steenweg, R., Hebblewhite, M., Kays, R., Ahumada, J., Fisher, J. T., Burton, C., … &amp; Brodie, J. (2017). Scaling‐up camera traps: Monitoring the planet’s biodiversity with networks of remote sensors. Frontiers in Ecology and the Environment, 15(1), 26-34.</p>
+<p>Toews, M., Juanes, F., &amp; Burton, A. C. (2017). Mammal responses to human footprint vary with spatial extent but not with spatial grain. Ecosphere, 8(3).</p>
+<p>Toews, M., Juanes, F., &amp; Burton, A. C. (2018). Mammal responses to the human footprint vary across species and stressors. Journal of environmental management, 217, 690-699.</p>
+<p>Wasser, S. K., Keim, J. L., Taper, M. L., &amp; Lele, S. R. (2011). The influences of wolf predation, habitat loss, and human activity on caribou and moose in the Alberta oil sands. Frontiers in Ecology and the Environment, 9(10), 546-551.</p>
+</div>
+<div id="appendix-a" class="section level1">
+<h1>Appendix A</h1>
+<p>Predicted moose abundance in each habitat type is shown with bars, and vertical lines indicate 90% confidence intervals. Only habitat and human footprint categories that are statistically separable are displayed.</p>
+<div class="figure" style="text-align: center">
+<img src="OSMMooseReview_v3_files/figure-html/unnamed-chunk-22-1.png" alt="Figure A1. Moose habitat associations based on ABMI snowtracking data." width="100%" />
+<p class="caption">
+Figure A1. Moose habitat associations based on ABMI snowtracking data.
+</p>
+</div>
+<p><br> <br></p>
+<p>In the following summer and winter seasonal models, only habitat and human footprint categories that are statistically separable are displayed.</p>
+<div class="figure" style="text-align: center">
+<img src="png_files/Veg+HF_figure_MooseSummer.png" alt="Figure A2. Moose summer habitat associations in northern Alberta based on ABMI camera data." width="100%" />
+<p class="caption">
+Figure A2. Moose summer habitat associations in northern Alberta based on ABMI camera data.
+</p>
+</div>
+<p><br> <br></p>
+<div class="figure" style="text-align: center">
+<img src="png_files/Veg+HF_figure_MooseWinter.png" alt="Figure A3. Moose winter habitat associations in northern Alberta based on ABMI camera data." width="100%" />
+<p class="caption">
+Figure A3. Moose winter habitat associations in northern Alberta based on ABMI camera data.
+</p>
+</div>
+<p><br> <br></p>
+<p>In the combined model, all habitat and human footprint categories are displayed. When significant differences are not found between forest stands of different ages (e.g. pine), equal level bars are displayed with the mean relative abundance value.</p>
+<div class="figure" style="text-align: center">
+<img src="png_files/Veg+HF_figure_all.png" alt="Figure A4. Moose combined summer-winter habitat associations in northern Alberta based on ABMI camera data." width="100%" />
+<p class="caption">
+Figure A4. Moose combined summer-winter habitat associations in northern Alberta based on ABMI camera data.
+</p>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The same map can be viewed interactively <a href="https://mabecker89.github.io/OSM-Synthesis-Moose/density">here</a>.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>The ABMI’s Caribou Monitoring Unit (CMU) works with the Regional Industry Caribou Collaboration (RICC) to study caribou population dynamics. Remote cameras that are placed within known caribou ranges also detect moose.<a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p>Note that Figure 4 is missing some camera deployment locations in the OSR, such as those used in the Christina Lake landscape by Fisher and Burton (2018).<a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p>These camera density estimates include data from deployments along ABMI’s grid, those deployed through the CMU’s work with RICC, and those from Bayne’s Big Grid studies. Data from cameras placed in a non-representative manner for other research questions (e.g. Boutin et al., 2015) are not included in these estimates.<a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>Individual images are converted into a ‘series’ based on a pre-defined rule set: all images &lt;20 seconds apart are counted as part of the same series, those &gt;120 seconds as different series, and a time weighted probability is used for times in between (based on manual checking of images).<a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p>The map of moose current abundance in the OSR can be viewed interactively <a href="https://mabecker89.github.io/OSM-Synthesis-Moose/relabund">here</a>.<a href="#fnref6">↩</a></p></li>
+</ol>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
