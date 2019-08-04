@@ -6,7 +6,7 @@
 
 This repository holds data, scripts, and reports associated with Moose work for the OSM synthesis project.
 
-**An updated version (July 30, 2019) of the moose report is available:**
+**An updated version (August 4, 2019) of the moose report is available:**
 
 [*Knowledge Assessment of Moose (Alces alces) in Alberta's Oil Sands Region*](https://mabecker89.github.io/OSM-Synthesis-Moose/OSMMooseReview_v3)
 
