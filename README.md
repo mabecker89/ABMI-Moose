@@ -1,5 +1,5 @@
 ### Project: Moose (*Alces alces*) in the Oil Sands Region of Alberta, Canada
-### Authors: Marcus Becker, Eric Nielson, Erin Bayne
+### Authors: Marcus Becker, Eric Neilson, Erin Bayne
 ### Created: 01/03/2019
 
 ---
